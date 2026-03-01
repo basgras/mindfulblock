@@ -3,8 +3,14 @@
   "name": "Mindful Block Redirect",
   "version": "1.0.0",
   "description": "Redirect blocked sites to mindful searches on mission-driven search engines.",
-  "permissions": ["storage", "tabs", "webNavigation"],
-  "host_permissions": ["<all_urls>"],
+  "permissions": [
+    "storage",
+    "tabs",
+    "webNavigation"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
   "background": {
     "service_worker": "background.js",
     "type": "module"

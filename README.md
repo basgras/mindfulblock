@@ -4,11 +4,13 @@ A Manifest V3 Chrome extension that reduces procrastination by redirecting visit
 
 ## How it works
 
-- Watches top-level navigation events via `chrome.webNavigation.onCommitted`.
-- If extension is **enabled** and the destination hostname matches any blocked domain (or subdomain), it redirects the tab to a search URL.
+- Watches top-level navigation events via `chrome.webNavigation.onBeforeNavigate`.
+- If extension is **enabled** and the destination hostname matches any blocked domain (or subdomain), it interrupts the navigation before the blocked page loads.
+- The tab is first sent to an extension-owned holding page (`redirect.html`) with a cute cloud + “Mindful detour” state.
+- That page immediately forwards to a mindful search URL.
 - Redirect target is selected at random (roughly 50/50) between:
   - Ecosia: `https://www.ecosia.org/search?q=...`
-  - OceanHero: `https://oceanhero.today/search?q=...`
+  - OceanHero: `https://oceanhero.today/web?q=...`
 - Search query is randomly selected from your editable mindful prompts list.
 - Redirect loops are prevented by skipping redirects when already on `ecosia.org` or `oceanhero.today` (including subdomains).
 
@@ -35,6 +37,9 @@ All settings are persisted in `chrome.storage.sync`.
 - `popup.html` – popup markup.
 - `popup.css` – popup styling.
 - `popup.js` – popup behavior and storage updates.
+- `redirect.html` – mindful holding page displayed before forwarding.
+- `redirect.css` – styles for the mindful holding page.
+- `redirect.js` – forwarding logic for the mindful holding page.
 
 ## Load unpacked in Chrome
 
@@ -48,5 +53,5 @@ All settings are persisted in `chrome.storage.sync`.
 
 - `storage`: save settings.
 - `tabs`: block current tab and perform redirect updates.
-- `webNavigation`: detect top-level navigations.
+- `webNavigation`: detect top-level navigations early (`onBeforeNavigate`).
 - Host access (`<all_urls>`): needed to inspect navigations broadly for blocklist matching.

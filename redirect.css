@@ -1,0 +1,55 @@
+:root {
+  color-scheme: light dark;
+  font-family: "Inter", "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  align-items: center;
+  background: radial-gradient(circle at top, #d8f4ff, #b6e2ff 45%, #8fc7ee);
+  color: #1d2a3a;
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.88);
+  border-radius: 20px;
+  box-shadow: 0 14px 36px rgba(23, 76, 117, 0.24);
+  max-width: 420px;
+  padding: 28px 24px;
+  text-align: center;
+  width: 100%;
+}
+
+.cloud {
+  animation: float 1.5s ease-in-out infinite;
+  font-size: 3rem;
+  margin-bottom: 8px;
+}
+
+h1 {
+  font-size: 1.6rem;
+  margin: 0 0 8px;
+}
+
+p {
+  font-size: 1rem;
+  margin: 0;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
