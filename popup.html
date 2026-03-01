@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mindful Block Redirect</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Mindful Block</h1>
+
+      <section class="toggle-row">
+        <label for="enabledToggle">Enabled</label>
+        <input id="enabledToggle" type="checkbox" />
+      </section>
+
+      <button id="blockCurrentTab" type="button">Block current tab</button>
+
+      <section>
+        <h2>Blocked domains</h2>
+        <form id="domainForm">
+          <input id="domainInput" type="text" placeholder="example.com or https://example.com" />
+          <button type="submit">Add</button>
+        </form>
+        <ul id="domainList"></ul>
+      </section>
+
+      <section>
+        <h2>Mindful prompts</h2>
+        <form id="promptForm">
+          <input id="promptInput" type="text" placeholder="quick breathing exercise" />
+          <button type="submit">Add</button>
+        </form>
+        <ul id="promptList"></ul>
+      </section>
+
+      <p id="message" role="status" aria-live="polite"></p>
+    </main>
+
+    <script src="popup.js" type="module"></script>
+  </body>
+</html>

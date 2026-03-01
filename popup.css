@@ -1,0 +1,71 @@
+:root {
+  color-scheme: light dark;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  min-width: 340px;
+}
+
+main {
+  padding: 12px;
+}
+
+h1 {
+  font-size: 1.2rem;
+  margin: 0 0 10px;
+}
+
+h2 {
+  font-size: 1rem;
+  margin: 12px 0 6px;
+}
+
+form {
+  display: flex;
+  gap: 8px;
+}
+
+input[type="text"] {
+  flex: 1;
+}
+
+button {
+  cursor: pointer;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+}
+
+li {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+li span {
+  overflow-wrap: anywhere;
+}
+
+.remove-button {
+  flex-shrink: 0;
+}
+
+.toggle-row {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+#message {
+  color: #2f7a2f;
+  font-size: 0.85rem;
+  min-height: 1.2em;
+}
