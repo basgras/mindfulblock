@@ -55,3 +55,5 @@ All settings are persisted in `chrome.storage.sync`.
 - `tabs`: block current tab and perform redirect updates.
 - `webNavigation`: detect top-level navigations early (`onBeforeNavigate`).
 - Host access (`<all_urls>`): needed to inspect navigations broadly for blocklist matching.
+
+
