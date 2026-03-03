@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mindful Block Redirect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
@@ -19,8 +22,8 @@
       <section class="card">
         <div class="switch-row">
           <div>
-            <h2>Protection</h2>
-            <p>Redirect distracting sites to mindful searches.</p>
+            <h2>Calm Guard</h2>
+            <p>When you visit a blocked site, we'll gently redirect you to something more useful.</p>
           </div>
           <label class="md-switch" for="enabledToggle">
             <input id="enabledToggle" type="checkbox" />
@@ -31,7 +34,7 @@
       </section>
 
       <details class="card" open>
-        <summary>Blocked domains</summary>
+        <summary>Sites to avoid</summary>
         <form id="domainForm" class="inline-form">
           <input id="domainInput" type="text" placeholder="example.com or https://example.com" />
           <button type="submit" class="tonal-btn">Add</button>
@@ -42,7 +45,7 @@
       <details class="card" open>
         <summary>Mindful prompts</summary>
         <form id="promptForm" class="inline-form">
-          <input id="promptInput" type="text" placeholder="Add your own prompt" />
+          <input id="promptInput" type="text" placeholder="What would help you right now?" />
           <button type="submit" class="tonal-btn">Add</button>
         </form>
         <ul id="promptList" class="list capped-list"></ul>
