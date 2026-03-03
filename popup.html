@@ -7,34 +7,48 @@
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
-    <main>
-      <h1>Mindful Block</h1>
+    <main class="app-shell">
+      <header class="hero">
+        <div class="cloud-icon" aria-hidden="true">☁️</div>
+        <div>
+          <h1>Mindful Block</h1>
+          <p>Gentle focus support</p>
+        </div>
+      </header>
 
-      <section class="toggle-row">
-        <label for="enabledToggle">Enabled</label>
-        <input id="enabledToggle" type="checkbox" />
+      <section class="card">
+        <div class="switch-row">
+          <div>
+            <h2>Protection</h2>
+            <p>Redirect distracting sites to mindful searches.</p>
+          </div>
+          <label class="md-switch" for="enabledToggle">
+            <input id="enabledToggle" type="checkbox" />
+            <span class="track"></span>
+          </label>
+        </div>
+        <button id="blockCurrentTab" type="button" class="primary-btn">Block current tab</button>
       </section>
 
-      <button id="blockCurrentTab" type="button">Block current tab</button>
-
-      <section>
-        <h2>Blocked domains</h2>
-        <form id="domainForm">
+      <details class="card" open>
+        <summary>Blocked domains</summary>
+        <form id="domainForm" class="inline-form">
           <input id="domainInput" type="text" placeholder="example.com or https://example.com" />
-          <button type="submit">Add</button>
+          <button type="submit" class="tonal-btn">Add</button>
         </form>
-        <ul id="domainList"></ul>
-      </section>
+        <ul id="domainList" class="list capped-list"></ul>
+      </details>
 
-      <section>
-        <h2>Mindful prompts</h2>
-        <form id="promptForm">
-          <input id="promptInput" type="text" placeholder="quick breathing exercise" />
-          <button type="submit">Add</button>
+      <details class="card" open>
+        <summary>Mindful prompts</summary>
+        <form id="promptForm" class="inline-form">
+          <input id="promptInput" type="text" placeholder="Add your own prompt" />
+          <button type="submit" class="tonal-btn">Add</button>
         </form>
-        <ul id="promptList"></ul>
-      </section>
+        <ul id="promptList" class="list capped-list"></ul>
+      </details>
 
+      <a class="text-link" href="welcome.html" target="_blank" rel="noreferrer">Open setup & instructions</a>
       <p id="message" role="status" aria-live="polite"></p>
     </main>
 

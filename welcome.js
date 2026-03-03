@@ -2,7 +2,6 @@ import { DEFAULT_SETTINGS, normalizeDomain, sanitizeDomains, sanitizePrompts } f
 
 const elements = {
   enabledToggle: document.getElementById("enabledToggle"),
-  blockCurrentTab: document.getElementById("blockCurrentTab"),
   domainForm: document.getElementById("domainForm"),
   domainInput: document.getElementById("domainInput"),
   domainList: document.getElementById("domainList"),
@@ -49,6 +48,7 @@ function renderList(listElement, values, onRemove) {
 
 function render() {
   elements.enabledToggle.checked = state.enabled;
+
   renderList(elements.domainList, state.blockedDomains, async (value) => {
     state.blockedDomains = state.blockedDomains.filter((domain) => domain !== value);
     await saveState();
@@ -62,30 +62,6 @@ function render() {
   });
 }
 
-async function addCurrentTabDomain() {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (!tab?.url) {
-    showMessage("No current tab URL available.");
-    return;
-  }
-
-  const domain = normalizeDomain(tab.url);
-  if (!domain) {
-    showMessage("Current tab has unsupported URL.");
-    return;
-  }
-
-  if (!state.blockedDomains.includes(domain)) {
-    state.blockedDomains = [...state.blockedDomains, domain].sort();
-    await saveState();
-    render();
-    showMessage(`Blocked ${domain}`);
-    return;
-  }
-
-  showMessage(`${domain} is already blocked.`);
-}
-
 async function setup() {
   const stored = await chrome.storage.sync.get(DEFAULT_SETTINGS);
   state = {
@@ -97,13 +73,7 @@ async function setup() {
   elements.enabledToggle.addEventListener("change", async () => {
     state.enabled = elements.enabledToggle.checked;
     await saveState();
-  });
-
-  elements.blockCurrentTab.addEventListener("click", () => {
-    addCurrentTabDomain().catch((error) => {
-      console.error(error);
-      showMessage("Could not block current tab.");
-    });
+    showMessage(state.enabled ? "Protection enabled." : "Protection paused.");
   });
 
   elements.domainForm.addEventListener("submit", async (event) => {
@@ -149,6 +119,6 @@ async function setup() {
 }
 
 setup().catch((error) => {
-  console.error("Popup initialization failed", error);
+  console.error("Welcome initialization failed", error);
   showMessage("Failed to load settings.");
 });

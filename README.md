@@ -1,45 +1,56 @@
 # Mindful Block Redirect (Chrome Extension, MV3)
 
-A Manifest V3 Chrome extension that reduces procrastination by redirecting visits to your blocked domains toward a small positive externality: a mindful search on mission-driven search engines.
+A Manifest V3 Chrome extension that reduces procrastination by redirecting visits to blocked domains toward mindful searches on mission-driven search engines.
+
+## What’s new in this build
+
+- Fluffy cloud visual identity (light sky-blue palette) across popup and onboarding surfaces.
+- Material-style popup controls and cards.
+- First-install onboarding page with instructions + full settings management.
+- Long list UX improvements (capped/scrollable settings lists).
+- Safer update behavior that preserves intentionally empty lists.
+- Shared domain/prompt sanitizing helpers used consistently across background, popup, and onboarding UIs.
+- Binary-free packaging (no image assets) for PR systems that reject binary diffs.
 
 ## How it works
 
 - Watches top-level navigation events via `chrome.webNavigation.onBeforeNavigate`.
-- If extension is **enabled** and the destination hostname matches any blocked domain (or subdomain), it interrupts the navigation before the blocked page loads.
-- The tab is first sent to an extension-owned holding page (`redirect.html`) with a cute cloud + “Mindful detour” state.
-- That page immediately forwards to a mindful search URL.
-- Redirect target is selected at random (roughly 50/50) between:
+- If extension is **enabled** and destination hostname matches a blocked domain (or subdomain), it interrupts navigation.
+- The tab is sent to `redirect.html` and then forwarded to a mindful search URL.
+- Redirect target is selected at random between:
   - Ecosia: `https://www.ecosia.org/search?q=...`
   - OceanHero: `https://oceanhero.today/web?q=...`
-- Search query is randomly selected from your editable mindful prompts list.
-- Redirect loops are prevented by skipping redirects when already on `ecosia.org` or `oceanhero.today` (including subdomains).
+- Search query is randomly selected from your editable prompts list.
+- Redirect loops are prevented for Ecosia and OceanHero domains.
 
-## Popup features
+## First install onboarding
 
-The popup UI lets you:
+On first install (`onInstalled` reason `install`) the extension opens `welcome.html` with:
 
-- Toggle the extension **Enabled** on/off.
-- Add/remove blocked domains.
-  - Accepts pasted URLs or domains.
-  - Normalizes to bare hostname (e.g., `https://www.youtube.com/watch?v=...` → `youtube.com`).
-  - Deduplicates entries.
-- Add/remove mindful prompts.
-  - Deduplicates entries.
-  - Rejects empty values.
-- Click **Block current tab** to quickly add the active tab's domain.
+1. Quick usage instructions.
+2. Protection toggle.
+3. Blocked domain editor.
+4. Mindful prompt editor.
 
-All settings are persisted in `chrome.storage.sync`.
+The same page is also set as `options_page` so users can revisit it from extension settings.
+
+## Data safety on updates
+
+Defaults are only applied when keys are **missing** in storage.
+
+- If a user intentionally clears `blockedDomains` to `[]`, updates will keep it empty.
+- If a user intentionally clears `prompts` to `[]`, updates will keep it empty.
+
+This avoids silent preference resets during extension upgrades.
 
 ## File structure
 
 - `manifest.json` – extension manifest and permissions.
-- `background.js` – service worker logic for navigation monitoring and redirect behavior.
-- `popup.html` – popup markup.
-- `popup.css` – popup styling.
-- `popup.js` – popup behavior and storage updates.
-- `redirect.html` – mindful holding page displayed before forwarding.
-- `redirect.css` – styles for the mindful holding page.
-- `redirect.js` – forwarding logic for the mindful holding page.
+- `defaults.js` – centralized default settings and prompt list.
+- `background.js` – service worker logic for redirects + install/update behavior.
+- `popup.html` / `popup.css` / `popup.js` – Material-like popup interface.
+- `welcome.html` / `welcome.css` / `welcome.js` – onboarding + settings page.
+- `redirect.html` / `redirect.css` / `redirect.js` – mindful holding page before forwarding.
 
 ## Load unpacked in Chrome
 
@@ -52,6 +63,6 @@ All settings are persisted in `chrome.storage.sync`.
 ## Notes on permissions
 
 - `storage`: save settings.
-- `tabs`: block current tab and perform redirect updates.
+- `tabs`: open onboarding tab and perform redirect updates.
 - `webNavigation`: detect top-level navigations early (`onBeforeNavigate`).
-- Host access (`<all_urls>`): needed to inspect navigations broadly for blocklist matching.
+- Host access (`<all_urls>`): inspect navigations broadly for blocklist matching.
