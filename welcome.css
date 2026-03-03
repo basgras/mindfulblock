@@ -1,0 +1,60 @@
+:root {
+  color-scheme: light;
+  font-family: "Roboto", "Segoe UI", sans-serif;
+  --primary: #2477b3;
+  --primary-container: #d7ecff;
+  --surface: #f8fbff;
+  --outline: #bfd3e4;
+  --text: #17324a;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  color: var(--text);
+  background: radial-gradient(circle at top, #e8f5ff, #d6ecff 40%, #c1def6);
+}
+
+.container {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 28px 16px;
+  display: grid;
+  gap: 14px;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid var(--outline);
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: 0 4px 14px rgba(34, 91, 134, 0.08);
+}
+
+.hero { display: flex; gap: 10px; align-items: center; }
+.hero-cloud { font-size: 2.4rem; }
+h1,h2,p { margin: 0; }
+ol { margin: 8px 0 0; padding-left: 20px; }
+li { margin-bottom: 6px; }
+.switch-row { display:flex; justify-content:space-between; gap:8px; align-items:center; margin-bottom:12px; }
+
+.md-switch { position: relative; width: 52px; height: 32px; }
+.md-switch input { opacity: 0; width: 0; height: 0; }
+.track { position:absolute; inset:0; border-radius:16px; background:#ccd7e2; }
+.track::after { content:""; position:absolute; top:4px; left:4px; width:24px; height:24px; border-radius:50%; background:white; box-shadow: 0 1px 3px rgba(0,0,0,.3); transition: transform .2s ease; }
+.md-switch input:checked + .track { background: var(--primary); }
+.md-switch input:checked + .track::after { transform: translateX(20px); }
+
+details { margin-top: 12px; }
+summary { font-weight:600; cursor:pointer; }
+.inline-form { display:flex; gap:8px; margin: 10px 0; }
+input[type="text"] { flex:1; border:1px solid var(--outline); border-radius:12px; padding:10px; }
+.tonal-btn, .remove-button { border:none; border-radius:999px; padding:8px 12px; font-weight:600; cursor:pointer; }
+.tonal-btn { background: var(--primary-container); color:#0d4f7c; }
+.list { list-style:none; margin:0; padding:0; }
+.capped-list { max-height: 250px; overflow:auto; }
+.list li { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:8px 0; border-bottom:1px solid #ecf2f8; }
+.list span { overflow-wrap:anywhere; }
+.remove-button { background:#ebf2f8; color:#3c5468; flex-shrink:0; }
+#message { margin-top: 10px; color:#2f7a2f; min-height:1.2em; }

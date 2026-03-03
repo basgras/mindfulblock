@@ -1,40 +1,10 @@
-const DEFAULT_SETTINGS = {
-  enabled: true,
-  blockedDomains: ["facebook.com", "x.com", "instagram.com", "youtube.com", "reddit.com"],
-  prompts: [
-    "5 minute breathing exercise",
-    "quick gratitude journaling prompt",
-    "short walk benefits",
-    "one small act of kindness today",
-    "how to refocus in 2 minutes"
-  ]
-};
+import { DEFAULT_SETTINGS, hasOwn, sanitizeDomains, sanitizePrompts } from "./defaults.js";
 
-const ENGINE_URLS = [
-  "https://www.ecosia.org/search?q=",
-  "https://oceanhero.today/web?q="
-];
-
+const ENGINE_URLS = ["https://www.ecosia.org/search?q=", "https://oceanhero.today/web?q="];
 const EXEMPT_DOMAINS = ["ecosia.org", "oceanhero.today"];
 
 function randomItem(items) {
   return items[Math.floor(Math.random() * items.length)];
-}
-
-function normalizeDomain(input) {
-  const value = (input || "").trim().toLowerCase();
-  if (!value) {
-    return "";
-  }
-
-  const parsedValue = value.includes("://") ? value : `https://${value}`;
-
-  try {
-    const url = new URL(parsedValue);
-    return url.hostname.replace(/^www\./, "");
-  } catch {
-    return "";
-  }
 }
 
 function matchesDomain(hostname, domain) {
@@ -45,12 +15,8 @@ async function getSettings() {
   const stored = await chrome.storage.sync.get(DEFAULT_SETTINGS);
   return {
     enabled: Boolean(stored.enabled),
-    blockedDomains: Array.isArray(stored.blockedDomains)
-      ? stored.blockedDomains.map(normalizeDomain).filter(Boolean)
-      : [],
-    prompts: Array.isArray(stored.prompts)
-      ? stored.prompts.map((prompt) => `${prompt}`.trim()).filter(Boolean)
-      : []
+    blockedDomains: sanitizeDomains(stored.blockedDomains),
+    prompts: sanitizePrompts(stored.prompts)
   };
 }
 
@@ -109,21 +75,27 @@ async function maybeRedirect(details) {
   await chrome.tabs.update(details.tabId, { url: holdingUrl });
 }
 
-chrome.runtime.onInstalled.addListener(async () => {
-  const existing = await chrome.storage.sync.get(DEFAULT_SETTINGS);
+chrome.runtime.onInstalled.addListener(async (details) => {
+  const existing = await chrome.storage.sync.get();
   const next = {
     enabled: typeof existing.enabled === "boolean" ? existing.enabled : DEFAULT_SETTINGS.enabled,
-    blockedDomains:
-      Array.isArray(existing.blockedDomains) && existing.blockedDomains.length > 0
-        ? [...new Set(existing.blockedDomains.map(normalizeDomain).filter(Boolean))]
-        : DEFAULT_SETTINGS.blockedDomains,
-    prompts:
-      Array.isArray(existing.prompts) && existing.prompts.length > 0
-        ? [...new Set(existing.prompts.map((item) => `${item}`.trim()).filter(Boolean))]
-        : DEFAULT_SETTINGS.prompts
+    blockedDomains: hasOwn(existing, "blockedDomains")
+      ? Array.isArray(existing.blockedDomains)
+        ? sanitizeDomains(existing.blockedDomains)
+        : [...DEFAULT_SETTINGS.blockedDomains]
+      : [...DEFAULT_SETTINGS.blockedDomains],
+    prompts: hasOwn(existing, "prompts")
+      ? Array.isArray(existing.prompts)
+        ? sanitizePrompts(existing.prompts)
+        : [...DEFAULT_SETTINGS.prompts]
+      : [...DEFAULT_SETTINGS.prompts]
   };
 
   await chrome.storage.sync.set(next);
+
+  if (details.reason === "install") {
+    await chrome.tabs.create({ url: chrome.runtime.getURL("welcome.html") });
+  }
 });
 
 chrome.webNavigation.onBeforeNavigate.addListener((details) => {
