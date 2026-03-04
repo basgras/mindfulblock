@@ -37,8 +37,10 @@ body {
 }
 
 .cloud-icon {
-  font-size: 1.8rem;
+  width: 44px;
+  height: 32px;
   filter: drop-shadow(0 2px 8px rgba(36, 119, 179, 0.3));
+  flex-shrink: 0;
 }
 
 h1,
@@ -93,6 +95,7 @@ summary {
   position: relative;
   width: 52px;
   height: 32px;
+  flex-shrink: 0;
 }
 
 .md-switch input {
@@ -106,6 +109,7 @@ summary {
   inset: 0;
   border-radius: 16px;
   background: #ccd7e2;
+  overflow: hidden;
 }
 
 .track::after {
@@ -232,4 +236,23 @@ li span {
   min-height: 1.2em;
   margin: 0;
   font-family: "Source Sans 3", "Segoe UI", sans-serif;
+}
+
+.engine-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.engine-name {
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.engine-sub {
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-size: 0.76rem;
+  color: #6a8899;
 }

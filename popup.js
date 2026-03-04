@@ -130,12 +130,12 @@ async function setup() {
     const prompt = elements.promptInput.value.trim();
 
     if (!prompt) {
-      showMessage("Prompt cannot be empty.");
+      showMessage("Search idea cannot be empty.");
       return;
     }
 
     if (state.prompts.includes(prompt)) {
-      showMessage("Prompt already exists.");
+      showMessage("Search idea already exists.");
       return;
     }
 

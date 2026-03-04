@@ -36,8 +36,10 @@ body {
 .hero { display: flex; gap: 12px; align-items: center; }
 
 .hero-cloud {
-  font-size: 2.4rem;
+  width: 60px;
+  height: 44px;
   filter: drop-shadow(0 3px 10px rgba(36, 119, 179, 0.3));
+  flex-shrink: 0;
 }
 
 h1, h2, p { margin: 0; }
@@ -93,9 +95,9 @@ h2 {
   margin-top: 3px;
 }
 
-.md-switch { position: relative; width: 52px; height: 32px; }
+.md-switch { position: relative; width: 52px; height: 32px; flex-shrink: 0; }
 .md-switch input { opacity: 0; width: 0; height: 0; }
-.track { position: absolute; inset: 0; border-radius: 16px; background: #ccd7e2; }
+.track { position: absolute; inset: 0; border-radius: 16px; background: #ccd7e2; overflow: hidden; }
 .track::after {
   content: "";
   position: absolute;
@@ -196,4 +198,23 @@ input[type="text"]::placeholder {
   min-height: 1.2em;
   font-family: "Source Sans 3", "Segoe UI", sans-serif;
   font-size: 0.88rem;
+}
+
+.engine-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.engine-name {
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.engine-sub {
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-size: 0.8rem;
+  color: #6a8899;
 }
