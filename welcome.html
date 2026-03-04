@@ -4,32 +4,35 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Welcome to Mindful Block</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="welcome.css" />
   </head>
   <body>
     <main class="container">
       <section class="hero card">
-        <div class="hero-cloud" aria-hidden="true">☁️</div>
+        <img id="app-icon" class="hero-cloud" src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 60'%3E%3Cpath d='M25 50 A15 15 0 0 1 10 35 A15 15 0 0 1 28 22 A20 20 0 0 1 67 18 A15 15 0 0 1 90 35 A15 15 0 0 1 75 50 Z' fill='none' stroke='%232477b3' stroke-width='3' stroke-linejoin='round'/%3E%3C/svg%3E" alt="Mindful Block" />
         <div>
           <h1>Welcome to Mindful Block</h1>
-          <p>Your happy little fluffy cloud for calmer browsing.</p>
+          <p>Your calm and fluffy cloud for better browsing.</p>
         </div>
       </section>
 
       <section class="card">
         <h2>Quick start</h2>
         <ol>
-          <li>Keep Protection enabled.</li>
-          <li>Add distracting domains you want to avoid.</li>
-          <li>Keep or edit mindful prompts to match your goals.</li>
+          <li>Add the sites that distract you.</li>
+          <li>When you visit one, Mindful Block redirects you to Ecosia or OceanHero instead.</li>
+          <li>Those search engines plant trees and remove plastic from the ocean. Every search counts.</li>
         </ol>
       </section>
 
       <section class="card settings">
         <div class="switch-row">
           <div>
-            <h2>Protection</h2>
-            <p>Redirect blocked sites toward mindful search prompts.</p>
+            <h2>Calm Guard</h2>
+            <p>When you visit a blocked site, we'll redirect you to something more useful.</p>
           </div>
           <label class="md-switch" for="enabledToggle">
             <input id="enabledToggle" type="checkbox" />
@@ -38,7 +41,7 @@
         </div>
 
         <details open>
-          <summary>Blocked domains</summary>
+          <summary>Sites to avoid</summary>
           <form id="domainForm" class="inline-form">
             <input id="domainInput" type="text" placeholder="example.com or https://example.com" />
             <button type="submit" class="tonal-btn">Add</button>
@@ -47,9 +50,35 @@
         </details>
 
         <details open>
-          <summary>Mindful prompts</summary>
+          <summary>Search engines</summary>
+          <ul class="list">
+            <li>
+              <div class="engine-info">
+                <span class="engine-name">Ecosia</span>
+                <span class="engine-sub">Plant trees</span>
+              </div>
+              <label class="md-switch" for="toggle-ecosia">
+                <input id="toggle-ecosia" type="checkbox" checked />
+                <span class="track"></span>
+              </label>
+            </li>
+            <li>
+              <div class="engine-info">
+                <span class="engine-name">OceanHero</span>
+                <span class="engine-sub">Clean oceans</span>
+              </div>
+              <label class="md-switch" for="toggle-oceanhero">
+                <input id="toggle-oceanhero" type="checkbox" checked />
+                <span class="track"></span>
+              </label>
+            </li>
+          </ul>
+        </details>
+
+        <details open>
+          <summary>Search ideas</summary>
           <form id="promptForm" class="inline-form">
-            <input id="promptInput" type="text" placeholder="Add your own prompt" />
+            <input id="promptInput" type="text" placeholder="What would help you right now?" />
             <button type="submit" class="tonal-btn">Add</button>
           </form>
           <ul id="promptList" class="list capped-list"></ul>

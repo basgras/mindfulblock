@@ -1,10 +1,10 @@
 :root {
   color-scheme: light;
-  font-family: "Roboto", "Segoe UI", sans-serif;
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
   --primary: #2477b3;
   --primary-container: #d7ecff;
-  --surface: #f8fbff;
-  --outline: #bfd3e4;
+  --surface: #f9f7f4;
+  --outline: #c4d4e0;
   --text: #17324a;
 }
 
@@ -15,28 +15,32 @@
 body {
   margin: 0;
   min-width: 360px;
-  background: linear-gradient(180deg, #edf7ff 0%, #f8fbff 100%);
+  background: linear-gradient(180deg, #e9f2f8 0%, #f9f7f4 100%);
   color: var(--text);
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
 }
 
 .app-shell {
-  padding: 12px;
+  padding: 12px 14px;
   display: grid;
   gap: 10px;
 }
 
 .hero {
-  background: white;
+  background: #fffdf9;
   border: 1px solid var(--outline);
   border-radius: 16px;
-  padding: 12px;
+  padding: 12px 14px;
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
 .cloud-icon {
-  font-size: 1.8rem;
+  width: 44px;
+  height: 32px;
+  filter: drop-shadow(0 2px 8px rgba(36, 119, 179, 0.3));
+  flex-shrink: 0;
 }
 
 h1,
@@ -46,25 +50,37 @@ p {
 }
 
 h1 {
-  font-size: 1.1rem;
+  font-family: "Nunito", sans-serif;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+h2 {
+  font-family: "Nunito", sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
 }
 
 .hero p,
 .switch-row p {
-  color: #40607a;
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  color: #4a6578;
   font-size: 0.82rem;
 }
 
 .card {
-  background: white;
+  background: #fffdf9;
   border: 1px solid var(--outline);
   border-radius: 16px;
-  padding: 12px;
+  padding: 12px 14px;
 }
 
 summary {
   cursor: pointer;
+  font-family: "Nunito", sans-serif;
   font-weight: 600;
+  font-size: 0.95rem;
 }
 
 .switch-row {
@@ -79,6 +95,7 @@ summary {
   position: relative;
   width: 52px;
   height: 32px;
+  flex-shrink: 0;
 }
 
 .md-switch input {
@@ -92,6 +109,7 @@ summary {
   inset: 0;
   border-radius: 16px;
   background: #ccd7e2;
+  overflow: hidden;
 }
 
 .track::after {
@@ -119,21 +137,29 @@ summary {
 .tonal-btn,
 .remove-button {
   border: none;
-  border-radius: 999px;
-  padding: 8px 12px;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-family: "Nunito", sans-serif;
   font-weight: 600;
+  font-size: 0.88rem;
   cursor: pointer;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .primary-btn {
   background: var(--primary);
   color: white;
   width: 100%;
+  border-radius: 8px;
 }
 
 .tonal-btn {
-  background: var(--primary-container);
-  color: #0d4f7c;
+  background: var(--primary);
+  color: white;
+  flex-shrink: 0;
 }
 
 .inline-form {
@@ -145,9 +171,16 @@ summary {
 input[type="text"] {
   flex: 1;
   border: 1px solid var(--outline);
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 9px 10px;
   background: #fafdff;
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-size: 0.88rem;
+  color: var(--text);
+}
+
+input[type="text"]::placeholder {
+  color: #7a97ab;
 }
 
 .list {
@@ -166,25 +199,34 @@ li {
   justify-content: space-between;
   gap: 8px;
   align-items: center;
-  padding: 7px 0;
-  border-bottom: 1px solid #ecf2f8;
+  padding: 10px 4px;
+  border-bottom: 1px solid #e8eef4;
+}
+
+li:last-child {
+  border-bottom: none;
 }
 
 li span {
   overflow-wrap: anywhere;
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
   font-size: 0.84rem;
 }
 
 .remove-button {
-  background: #ebf2f8;
-  color: #3c5468;
+  background: #fdecea;
+  color: #c0392b;
   flex-shrink: 0;
+  font-size: 0.8rem;
+  padding: 6px 10px;
+  height: 30px;
 }
 
 .text-link {
   text-align: center;
-  color: #286ea2;
+  color: var(--primary);
   text-decoration: none;
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
   font-size: 0.84rem;
 }
 
@@ -193,4 +235,24 @@ li span {
   font-size: 0.8rem;
   min-height: 1.2em;
   margin: 0;
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+}
+
+.engine-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.engine-name {
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.engine-sub {
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-size: 0.76rem;
+  color: #6a8899;
 }
