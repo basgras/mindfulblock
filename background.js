@@ -124,15 +124,28 @@ chrome.runtime.onInstalled.addListener(async (details) => {
     next.blockedDomains = [...DEFAULT_SETTINGS.blockedDomains];
   }
 
-  // Prompts: initialize if missing, or append newly-added default prompts only
+  // Prompts: initialize if missing, or append only genuinely new default prompts
+  // introducedPrompts tracks which defaults have ever been auto-added, so deleted prompts
+  // are never silently restored on future updates.
   if (!hasOwn(existing, "prompts") || !Array.isArray(existing.prompts)) {
+    // Fresh install — seed both the user list and introducedPrompts with all defaults
     next.prompts = [...DEFAULT_SETTINGS.prompts];
+    next.introducedPrompts = [...DEFAULT_PROMPTS];
   } else {
     const existingPrompts = sanitizePrompts(existing.prompts);
-    const existingSet = new Set(existingPrompts);
-    const newDefaults = DEFAULT_PROMPTS.filter((p) => !existingSet.has(p));
-    if (newDefaults.length > 0) {
-      next.prompts = [...existingPrompts, ...newDefaults];
+
+    if (!hasOwn(existing, "introducedPrompts") || !Array.isArray(existing.introducedPrompts)) {
+      // Existing install that predates introducedPrompts — register all current defaults
+      // as already introduced so they are never re-added. Do not touch the user's list.
+      next.introducedPrompts = [...DEFAULT_PROMPTS];
+    } else {
+      // Normal update — only add prompts that have never been introduced before
+      const introducedSet = new Set(existing.introducedPrompts);
+      const genuinelyNew = DEFAULT_PROMPTS.filter((p) => !introducedSet.has(p));
+      if (genuinelyNew.length > 0) {
+        next.prompts = [...existingPrompts, ...genuinelyNew];
+        next.introducedPrompts = [...existing.introducedPrompts, ...genuinelyNew];
+      }
     }
   }
 
