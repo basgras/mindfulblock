@@ -90,7 +90,7 @@ async function addCurrentTabDomain() {
   }
 
   if (isRedirectEngine(domain)) {
-    showMessage("You can't block the redirect engines. :-)");
+    showMessage("You can't block the redirect search engines. :-)");
     return;
   }
 
@@ -141,7 +141,7 @@ async function setup() {
     const nextEcosia = elements.toggleEcosia.checked;
     if (!nextEcosia && !state.oceanHeroEnabled) {
       elements.toggleEcosia.checked = true;
-      showMessage("At least one search engine must be active.");
+      showMessage("At least one search engine must be active. :-)");
       return;
     }
     state.ecosiaEnabled = nextEcosia;
@@ -152,7 +152,7 @@ async function setup() {
     const nextOceanHero = elements.toggleOceanHero.checked;
     if (!nextOceanHero && !state.ecosiaEnabled) {
       elements.toggleOceanHero.checked = true;
-      showMessage("At least one search engine must be active.");
+      showMessage("At least one search engine must be active. :-)");
       return;
     }
     state.oceanHeroEnabled = nextOceanHero;
@@ -173,7 +173,7 @@ async function setup() {
     }
 
     if (isRedirectEngine(domain)) {
-      showMessage("You can't block the redirect engines. :-)");
+      showMessage("You can't block the redirect search engines. :-)");
       return;
     }
 

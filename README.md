@@ -1,56 +1,69 @@
-# Mindful Block Redirect (Chrome Extension, MV3)
+# Mindful Block (Chrome Extension, MV3)
 
 A Manifest V3 Chrome extension that reduces procrastination by redirecting visits to blocked domains toward mindful searches on mission-driven search engines.
-
-## What’s new in this build
-
-- Fluffy cloud visual identity (light sky-blue palette) across popup and onboarding surfaces.
-- Material-style popup controls and cards.
-- First-install onboarding page with instructions + full settings management.
-- Long list UX improvements (capped/scrollable settings lists).
-- Safer update behavior that preserves intentionally empty lists.
-- Shared domain/prompt sanitizing helpers used consistently across background, popup, and onboarding UIs.
-- Binary-free packaging (no image assets) for PR systems that reject binary diffs.
 
 ## How it works
 
 - Watches top-level navigation events via `chrome.webNavigation.onBeforeNavigate`.
-- If extension is **enabled** and destination hostname matches a blocked domain (or subdomain), it interrupts navigation.
-- The tab is sent to `redirect.html` and then forwarded to a mindful search URL.
-- Redirect target is selected at random between:
-  - Ecosia: `https://www.ecosia.org/search?q=...`
-  - OceanHero: `https://oceanhero.today/web?q=...`
-- Search query is randomly selected from your editable prompts list.
-- Redirect loops are prevented for Ecosia and OceanHero domains.
+- If the extension is **enabled** and the destination hostname matches a blocked domain (or subdomain), it interrupts navigation.
+- The tab is redirected to a mindful search on one of the active engines, chosen at random.
+- The search query is randomly selected from your editable prompts list.
+- Redirect loops are prevented — Ecosia and OceanHero domains can never be blocked.
 
-## First install onboarding
+## Search engines
 
-On first install (`onInstalled` reason `install`) the extension opens `welcome.html` with:
+Two mission-driven engines are supported:
+
+| Engine | Mission | Default URL pattern |
+|--------|---------|-------------------|
+| **Ecosia** | Plants trees | `https://www.ecosia.org/search?q=...` |
+| **OceanHero** | Removes ocean plastic | `https://oceanhero.today/web?q=...` |
+
+Both are enabled by default. You can disable either one, but at least one must stay active.
+
+**Image search:** Enable "Use image search by default" to redirect to image search results instead of web results. When on, Ecosia uses `/images?q=` and OceanHero uses `/search?q=` (their respective image search endpoints).
+
+## Features
+
+- **Calm Guard toggle** — pause and resume all redirects with one tap.
+- **Context menu** — right-click the extension icon to "Pause / Resume Calm Guard" without opening the popup.
+- **Block current tab** — one-click button in the popup adds the active tab's domain to the block list.
+- **Search engine toggles** — enable/disable Ecosia and OceanHero individually; the at-least-one rule is enforced with a friendly inline message.
+- **Image search toggle** — global option to redirect to image results instead of web results.
+- **Search ideas** — editable list of mindful prompts used as redirect queries.
+- **Capped scrollable lists** — blocked domains and prompts lists are scrollable so the UI stays compact.
+
+## First-install onboarding
+
+On first install (`onInstalled` reason `install`) the extension opens `welcome.html`, which includes:
 
 1. Quick usage instructions.
-2. Protection toggle.
+2. Calm Guard toggle.
 3. Blocked domain editor.
-4. Mindful prompt editor.
+4. Search engine toggles (Ecosia, OceanHero, image search).
+5. Mindful prompt editor.
 
-The same page is also set as `options_page` so users can revisit it from extension settings.
+The same page is set as `options_page` so users can return to it from `chrome://extensions`.
 
 ## Data safety on updates
 
 Defaults are only applied when keys are **missing** in storage.
 
-- If a user intentionally clears `blockedDomains` to `[]`, updates will keep it empty.
-- If a user intentionally clears `prompts` to `[]`, updates will keep it empty.
-
-This avoids silent preference resets during extension upgrades.
+- If a user clears `blockedDomains` to `[]`, updates keep it empty.
+- If a user clears `prompts` to `[]`, updates keep it empty.
+- New default prompts are appended without duplicates; existing entries are never overwritten.
+- Engine toggle states and all other preferences are preserved across updates.
 
 ## File structure
 
-- `manifest.json` – extension manifest and permissions.
-- `defaults.js` – centralized default settings and prompt list.
-- `background.js` – service worker logic for redirects + install/update behavior.
-- `popup.html` / `popup.css` / `popup.js` – Material-like popup interface.
-- `welcome.html` / `welcome.css` / `welcome.js` – onboarding + settings page.
-- `redirect.html` / `redirect.css` / `redirect.js` – mindful holding page before forwarding.
+| File | Purpose |
+|------|---------|
+| `manifest.json` | Extension manifest and permissions |
+| `defaults.js` | Centralized default settings and prompt list |
+| `background.js` | Service worker: redirects, install/update behavior, context menu |
+| `popup.html/css/js` | Material-style popup interface |
+| `welcome.html/css/js` | Onboarding and full settings page |
+| `redirect.html/css/js` | Mindful holding page shown briefly before forwarding |
 
 ## Load unpacked in Chrome
 
@@ -58,11 +71,14 @@ This avoids silent preference resets during extension upgrades.
 2. Enable **Developer mode**.
 3. Click **Load unpacked**.
 4. Select this folder (`mindful-block`).
-5. Pin the extension and click it to configure blocked domains/prompts.
+5. Pin the extension and click it to configure blocked domains and prompts.
 
-## Notes on permissions
+## Permissions
 
-- `storage`: save settings.
-- `tabs`: open onboarding tab and perform redirect updates.
-- `webNavigation`: detect top-level navigations early (`onBeforeNavigate`).
-- Host access (`<all_urls>`): inspect navigations broadly for blocklist matching.
+| Permission | Why |
+|-----------|-----|
+| `storage` | Save and sync settings across devices |
+| `tabs` | Open onboarding tab; read active tab URL for "Block current tab" |
+| `contextMenus` | Add "Pause / Resume Calm Guard" to the extension icon right-click menu |
+| `webNavigation` | Detect top-level navigations early (`onBeforeNavigate`) |
+| `<all_urls>` | Inspect all navigations for blocklist matching |
