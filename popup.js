@@ -19,13 +19,16 @@ const elements = {
 
 let state = { ...DEFAULT_SETTINGS };
 
-function showMessage(text) {
+function showMessage(text, type = "error") {
   elements.message.textContent = text;
+  elements.message.dataset.type = type;
+  elements.message.classList.add("visible");
   window.setTimeout(() => {
     if (elements.message.textContent === text) {
       elements.message.textContent = "";
+      elements.message.classList.remove("visible");
     }
-  }, 1800);
+  }, 3000);
 }
 
 async function saveState() {
@@ -98,7 +101,7 @@ async function addCurrentTabDomain() {
     state.blockedDomains = [...state.blockedDomains, domain].sort();
     await saveState();
     render();
-    showMessage(`Blocked ${domain}`);
+    showMessage(`Blocked ${domain}`, "info");
     return;
   }
 

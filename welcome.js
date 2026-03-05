@@ -18,13 +18,16 @@ const elements = {
 
 let state = { ...DEFAULT_SETTINGS };
 
-function showMessage(text) {
+function showMessage(text, type = "error") {
   elements.message.textContent = text;
+  elements.message.dataset.type = type;
+  elements.message.classList.add("visible");
   window.setTimeout(() => {
     if (elements.message.textContent === text) {
       elements.message.textContent = "";
+      elements.message.classList.remove("visible");
     }
-  }, 1800);
+  }, 3000);
 }
 
 function isRedirectEngine(domain) {
@@ -89,7 +92,7 @@ async function setup() {
   elements.enabledToggle.addEventListener("change", async () => {
     state.enabled = elements.enabledToggle.checked;
     await saveState();
-    showMessage(state.enabled ? "Protection enabled." : "Protection paused.");
+    showMessage(state.enabled ? "Protection enabled." : "Protection paused.", "info");
   });
 
   elements.toggleEcosia.addEventListener("change", async () => {
