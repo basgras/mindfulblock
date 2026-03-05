@@ -23,7 +23,7 @@ body {
 .app-shell {
   padding: 12px 14px;
   display: grid;
-  gap: 10px;
+  gap: 12px;
 }
 
 .hero {
@@ -39,7 +39,7 @@ body {
 .cloud-icon {
   width: 44px;
   height: 32px;
-  filter: drop-shadow(0 2px 8px rgba(36, 119, 179, 0.3));
+  filter: drop-shadow(0 3px 10px rgba(36, 119, 179, 0.45));
   flex-shrink: 0;
 }
 
@@ -199,7 +199,7 @@ li {
   justify-content: space-between;
   gap: 8px;
   align-items: center;
-  padding: 10px 4px;
+  padding: 12px 4px;
   border-bottom: 1px solid #e8eef4;
 }
 

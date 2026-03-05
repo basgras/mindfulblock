@@ -38,7 +38,7 @@ body {
 .hero-cloud {
   width: 60px;
   height: 44px;
-  filter: drop-shadow(0 3px 10px rgba(36, 119, 179, 0.3));
+  filter: drop-shadow(0 4px 12px rgba(36, 119, 179, 0.45));
   flex-shrink: 0;
 }
 
@@ -169,7 +169,7 @@ input[type="text"]::placeholder {
   justify-content: space-between;
   align-items: center;
   gap: 8px;
-  padding: 11px 4px;
+  padding: 13px 4px;
   border-bottom: 1px solid #e8eef4;
 }
 
