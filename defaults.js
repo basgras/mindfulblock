@@ -104,7 +104,10 @@ export const DEFAULT_PROMPTS = [
 export const DEFAULT_SETTINGS = {
   enabled: true,
   blockedDomains: ["facebook.com", "x.com", "instagram.com", "youtube.com", "reddit.com"],
-  prompts: DEFAULT_PROMPTS
+  prompts: DEFAULT_PROMPTS,
+  ecosiaEnabled: true,
+  oceanHeroEnabled: true,
+  imageSearchEnabled: false
 };
 
 export function normalizeDomain(input) {

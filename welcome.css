@@ -194,10 +194,17 @@ input[type="text"]::placeholder {
 
 #message {
   margin-top: 12px;
-  color: #2f7a2f;
+  color: var(--text);
   min-height: 1.2em;
   font-family: "Source Sans 3", "Segoe UI", sans-serif;
   font-size: 0.88rem;
+}
+
+.image-search-row {
+  border-top: 1px solid var(--outline);
+  padding-top: 10px;
+  margin-top: 4px;
+  margin-bottom: 0;
 }
 
 .engine-info {
