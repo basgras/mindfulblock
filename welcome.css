@@ -193,11 +193,30 @@ input[type="text"]::placeholder {
 }
 
 #message {
-  margin-top: 12px;
-  color: var(--text);
-  min-height: 1.2em;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  padding: 9px 16px;
+  text-align: center;
   font-family: "Source Sans 3", "Segoe UI", sans-serif;
   font-size: 0.88rem;
+  font-weight: 600;
+  background: #fdecea;
+  color: #c0392b;
+  transform: translateY(-100%);
+  transition: transform 0.2s ease;
+  pointer-events: none;
+}
+
+#message.visible {
+  transform: translateY(0);
+}
+
+#message[data-type="info"] {
+  background: #e8f4fd;
+  color: #1a6fa8;
 }
 
 .image-search-row {
