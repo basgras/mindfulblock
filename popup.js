@@ -3,6 +3,8 @@ import { DEFAULT_SETTINGS, normalizeDomain, sanitizeDomains, sanitizePrompts } f
 const REDIRECT_ENGINES = ["ecosia.org", "oceanhero.today"];
 
 const elements = {
+  hero: document.getElementById("hero"),
+  pausedBadge: document.getElementById("paused-badge"),
   enabledToggle: document.getElementById("enabledToggle"),
   blockCurrentTab: document.getElementById("blockCurrentTab"),
   domainForm: document.getElementById("domainForm"),
@@ -61,6 +63,8 @@ function renderList(listElement, values, onRemove) {
 }
 
 function render() {
+  elements.hero.classList.toggle("is-paused", !state.enabled);
+  elements.pausedBadge.hidden = state.enabled;
   elements.enabledToggle.checked = state.enabled;
   elements.toggleEcosia.checked = state.ecosiaEnabled;
   elements.toggleOceanHero.checked = state.oceanHeroEnabled;
@@ -119,17 +123,22 @@ async function setup() {
     prompts: sanitizePrompts(stored.prompts)
   };
 
-  // Hide "Block current tab" if user is on a redirect engine tab
+  // Set "Block current tab" button label and visibility based on current tab
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (tab?.url) {
     const currentDomain = normalizeDomain(tab.url);
     if (currentDomain && isRedirectEngine(currentDomain)) {
       elements.blockCurrentTab.hidden = true;
+    } else if (currentDomain) {
+      elements.blockCurrentTab.textContent = `Block ${currentDomain}`;
     }
+    // If currentDomain is empty (e.g. chrome:// page), keep the generic label
   }
 
   elements.enabledToggle.addEventListener("change", async () => {
     state.enabled = elements.enabledToggle.checked;
+    elements.hero.classList.toggle("is-paused", !state.enabled);
+    elements.pausedBadge.hidden = state.enabled;
     await saveState();
   });
 

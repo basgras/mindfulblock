@@ -36,8 +36,8 @@ body {
 .hero { display: flex; gap: 12px; align-items: center; }
 
 .hero-cloud {
-  width: 60px;
-  height: 44px;
+  width: 56px;
+  height: 56px;
   filter: drop-shadow(0 4px 12px rgba(36, 119, 179, 0.45));
   flex-shrink: 0;
 }
@@ -62,6 +62,27 @@ h2 {
   font-size: 0.9rem;
   color: #4a6578;
   margin-top: 2px;
+}
+
+.settings-heading {
+  font-family: "Nunito", sans-serif;
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin: 0;
+  padding: 4px 0 0;
+  color: var(--text);
+}
+
+.pin-nudge h2 {
+  margin-bottom: 6px;
+}
+
+.pin-nudge p {
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-size: 0.92rem;
+  color: #4a6578;
+  margin: 0;
 }
 
 /* Quick Start box — slightly lighter padding */

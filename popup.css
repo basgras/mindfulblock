@@ -37,8 +37,8 @@ body {
 }
 
 .cloud-icon {
-  width: 44px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   filter: drop-shadow(0 3px 10px rgba(36, 119, 179, 0.45));
   flex-shrink: 0;
 }
@@ -255,6 +255,33 @@ li span {
 #message[data-type="info"] {
   background: #e8f4fd;
   color: #1a6fa8;
+}
+
+/* Paused state */
+.hero.is-paused {
+  border-color: #e8c8a0;
+  background-color: #fdf8f2;
+}
+
+.hero.is-paused .cloud-icon {
+  opacity: 0.55;
+  filter: drop-shadow(0 2px 4px rgba(180, 130, 60, 0.15));
+}
+
+.paused-badge {
+  font-family: "Nunito", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #9a6a1f;
+  background: #fdecd0;
+  border: 1px solid #e8c8a0;
+  border-radius: 99px;
+  padding: 2px 8px;
+  align-self: flex-start;
+  white-space: nowrap;
+  margin-left: auto;
 }
 
 .image-search-row {

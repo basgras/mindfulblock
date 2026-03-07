@@ -154,6 +154,12 @@ chrome.runtime.onInstalled.addListener(async (details) => {
   if (!hasOwn(existing, "oceanHeroEnabled")) next.oceanHeroEnabled = true;
   if (!hasOwn(existing, "imageSearchEnabled")) next.imageSearchEnabled = false;
 
+  // welcomeSeen: false on fresh install so the welcome page shows onboarding;
+  // true for existing users upgrading from a version before this flag existed.
+  if (!hasOwn(existing, "welcomeSeen")) {
+    next.welcomeSeen = details.reason === "install" ? false : true;
+  }
+
   if (Object.keys(next).length > 0) {
     await chrome.storage.sync.set(next);
   }
