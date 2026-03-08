@@ -85,14 +85,22 @@ function render() {
 
 async function addCurrentTabDomain() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (!tab?.url) {
-    showMessage("No current tab URL available.");
+
+  let tabUrl;
+  try {
+    tabUrl = tab?.url ? new URL(tab.url) : null;
+  } catch {
+    tabUrl = null;
+  }
+
+  if (!tabUrl || !["http:", "https:"].includes(tabUrl.protocol)) {
+    showMessage("Only regular web pages can be blocked.");
     return;
   }
 
   const domain = normalizeDomain(tab.url);
   if (!domain) {
-    showMessage("Current tab has unsupported URL.");
+    showMessage("Only regular web pages can be blocked.");
     return;
   }
 
@@ -101,15 +109,15 @@ async function addCurrentTabDomain() {
     return;
   }
 
-  if (!state.blockedDomains.includes(domain)) {
-    state.blockedDomains = [...state.blockedDomains, domain].sort();
-    await saveState();
-    render();
-    showMessage(`Blocked ${domain}`, "info");
+  if (state.blockedDomains.includes(domain)) {
+    showMessage(`Already blocking ${domain}.`);
     return;
   }
 
-  showMessage(`${domain} is already blocked.`);
+  state.blockedDomains = [...state.blockedDomains, domain].sort();
+  await saveState();
+  render();
+  showMessage(`Blocked ${domain}`, "info");
 }
 
 async function setup() {
@@ -123,20 +131,21 @@ async function setup() {
     prompts: sanitizePrompts(stored.prompts)
   };
 
-  // Set "Block current tab" button label, visibility, and state based on current tab
+  // Set button label when on a regular web page (label stays "Block current tab" otherwise)
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (tab?.url) {
-    const currentDomain = normalizeDomain(tab.url);
-    if (currentDomain && isRedirectEngine(currentDomain)) {
-      elements.blockCurrentTab.hidden = true;      // hide entirely on Ecosia/OceanHero
-    } else if (currentDomain) {
-      elements.blockCurrentTab.textContent = `Block ${currentDomain}`;
-      elements.blockCurrentTab.title = currentDomain; // tooltip for long domains
-    } else {
-      elements.blockCurrentTab.disabled = true;    // chrome://, new tab, etc.
+    try {
+      const tabUrl = new URL(tab.url);
+      if (["http:", "https:"].includes(tabUrl.protocol)) {
+        const domain = normalizeDomain(tab.url);
+        if (domain) {
+          elements.blockCurrentTab.textContent = `Block ${domain}`;
+          elements.blockCurrentTab.title = domain;
+        }
+      }
+    } catch {
+      // Ignore unparseable URLs — button keeps its default label
     }
-  } else {
-    elements.blockCurrentTab.disabled = true;      // no URL available
   }
 
   elements.enabledToggle.addEventListener("change", async () => {
@@ -144,6 +153,29 @@ async function setup() {
     elements.hero.classList.toggle("is-paused", !state.enabled);
     elements.pausedBadge.hidden = state.enabled;
     await saveState();
+
+    if (state.enabled) {
+      // If the current tab is on a blocked domain, redirect it immediately
+      const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (activeTab?.url) {
+        try {
+          const { hostname } = new URL(activeTab.url);
+          const h = hostname.toLowerCase();
+          const isBlocked = state.blockedDomains.some(
+            (d) => h === d || h.endsWith(`.${d}`)
+          );
+          if (isBlocked) {
+            chrome.runtime.sendMessage({
+              type: "redirect-tab",
+              tabId: activeTab.id,
+              hostname: h
+            }).catch(() => {});
+          }
+        } catch {
+          // Ignore URL parse errors
+        }
+      }
+    }
   });
 
   elements.blockCurrentTab.addEventListener("click", () => {

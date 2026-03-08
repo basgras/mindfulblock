@@ -150,6 +150,8 @@ summary {
 }
 
 .primary-btn {
+  display: block;
+  text-align: center;
   background: var(--primary);
   color: white;
   width: 100%;
@@ -157,11 +159,6 @@ summary {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.primary-btn:disabled {
-  opacity: 0.45;
-  cursor: default;
 }
 
 .tonal-btn {

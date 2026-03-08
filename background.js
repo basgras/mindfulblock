@@ -200,6 +200,19 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
 // Sync context menu title on every service worker start
 syncContextMenuTitle();
 
+// Redirect a specific tab on demand (e.g. when Calm Guard is re-enabled from the popup)
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.type !== "redirect-tab") return;
+  getSettings().then((settings) => {
+    if (settings.prompts.length === 0) return;
+    const mindfulTarget = createMindfulSearchUrl(settings.prompts, settings);
+    const holdingUrl = createHoldingPageUrl(mindfulTarget, message.hostname);
+    return chrome.tabs.update(message.tabId, { url: holdingUrl });
+  }).catch((error) => {
+    console.error("Mindful Block: failed to redirect tab on re-enable", error);
+  });
+});
+
 // Main redirect listener
 chrome.webNavigation.onBeforeNavigate.addListener((details) => {
   maybeRedirect(details).catch((error) => {
