@@ -79,7 +79,7 @@ function render() {
 }
 
 async function setup() {
-  const stored = await chrome.storage.sync.get(DEFAULT_SETTINGS);
+  const stored = await chrome.storage.sync.get({ ...DEFAULT_SETTINGS, welcomeSeen: false });
   state = {
     enabled: Boolean(stored.enabled),
     ecosiaEnabled: stored.ecosiaEnabled !== false,
@@ -88,6 +88,17 @@ async function setup() {
     blockedDomains: sanitizeDomains(stored.blockedDomains),
     prompts: sanitizePrompts(stored.prompts)
   };
+
+  const welcomeSection = document.getElementById("welcome-section");
+  const settingsTitle = document.getElementById("settings-title");
+
+  if (stored.welcomeSeen) {
+    welcomeSection.hidden = true;
+    settingsTitle.hidden = false;
+  } else {
+    // Mark as seen so return visits show the compact settings view
+    chrome.storage.sync.set({ welcomeSeen: true });
+  }
 
   elements.enabledToggle.addEventListener("change", async () => {
     state.enabled = elements.enabledToggle.checked;
@@ -160,7 +171,7 @@ async function setup() {
       return;
     }
 
-    state.prompts = [...state.prompts, prompt];
+    state.prompts = [prompt, ...state.prompts];
     elements.promptInput.value = "";
     await saveState();
     render();

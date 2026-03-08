@@ -9,7 +9,7 @@
 
 body {
   align-items: center;
-  background: radial-gradient(circle at top, #d8f4ff, #b6e2ff 45%, #8fc7ee);
+  background: #F6FFFF;
   color: #1d2a3a;
   display: flex;
   justify-content: center;
@@ -28,10 +28,12 @@ body {
   width: 100%;
 }
 
-.cloud {
+.redirect-logo {
+  width: 64px;
+  height: 64px;
+  display: block;
+  margin: 0 auto 8px;
   animation: float 1.5s ease-in-out infinite;
-  font-size: 3rem;
-  margin-bottom: 8px;
 }
 
 h1 {

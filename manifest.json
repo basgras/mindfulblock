@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Mindful Block Redirect",
+  "name": "Mindful Block",
   "version": "1.1.2",
   "description": "Redirect blocked sites to mindful searches on mission-driven search engines.",
   "permissions": [
@@ -16,9 +16,21 @@
     "service_worker": "background.js",
     "type": "module"
   },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
   "action": {
-    "default_title": "Mindful Block Redirect",
-    "default_popup": "popup.html"
+    "default_title": "Mindful Block",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
   },
   "options_page": "welcome.html"
 }

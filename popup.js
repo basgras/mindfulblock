@@ -3,6 +3,8 @@ import { DEFAULT_SETTINGS, normalizeDomain, sanitizeDomains, sanitizePrompts } f
 const REDIRECT_ENGINES = ["ecosia.org", "oceanhero.today"];
 
 const elements = {
+  hero: document.getElementById("hero"),
+  pausedBadge: document.getElementById("paused-badge"),
   enabledToggle: document.getElementById("enabledToggle"),
   blockCurrentTab: document.getElementById("blockCurrentTab"),
   domainForm: document.getElementById("domainForm"),
@@ -61,6 +63,8 @@ function renderList(listElement, values, onRemove) {
 }
 
 function render() {
+  elements.hero.classList.toggle("is-paused", !state.enabled);
+  elements.pausedBadge.hidden = state.enabled;
   elements.enabledToggle.checked = state.enabled;
   elements.toggleEcosia.checked = state.ecosiaEnabled;
   elements.toggleOceanHero.checked = state.oceanHeroEnabled;
@@ -81,14 +85,22 @@ function render() {
 
 async function addCurrentTabDomain() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (!tab?.url) {
-    showMessage("No current tab URL available.");
+
+  let tabUrl;
+  try {
+    tabUrl = tab?.url ? new URL(tab.url) : null;
+  } catch {
+    tabUrl = null;
+  }
+
+  if (!tabUrl || !["http:", "https:"].includes(tabUrl.protocol)) {
+    showMessage("Only regular web pages can be blocked.");
     return;
   }
 
   const domain = normalizeDomain(tab.url);
   if (!domain) {
-    showMessage("Current tab has unsupported URL.");
+    showMessage("Only regular web pages can be blocked.");
     return;
   }
 
@@ -97,15 +109,15 @@ async function addCurrentTabDomain() {
     return;
   }
 
-  if (!state.blockedDomains.includes(domain)) {
-    state.blockedDomains = [...state.blockedDomains, domain].sort();
-    await saveState();
-    render();
-    showMessage(`Blocked ${domain}`, "info");
+  if (state.blockedDomains.includes(domain)) {
+    showMessage(`Already blocking ${domain}.`);
     return;
   }
 
-  showMessage(`${domain} is already blocked.`);
+  state.blockedDomains = [...state.blockedDomains, domain].sort();
+  await saveState();
+  render();
+  showMessage(`Blocked ${domain}`, "info");
 }
 
 async function setup() {
@@ -119,18 +131,51 @@ async function setup() {
     prompts: sanitizePrompts(stored.prompts)
   };
 
-  // Hide "Block current tab" if user is on a redirect engine tab
+  // Set button label when on a regular web page (label stays "Block current tab" otherwise)
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (tab?.url) {
-    const currentDomain = normalizeDomain(tab.url);
-    if (currentDomain && isRedirectEngine(currentDomain)) {
-      elements.blockCurrentTab.hidden = true;
+    try {
+      const tabUrl = new URL(tab.url);
+      if (["http:", "https:"].includes(tabUrl.protocol)) {
+        const domain = normalizeDomain(tab.url);
+        if (domain) {
+          elements.blockCurrentTab.textContent = `Block ${domain}`;
+          elements.blockCurrentTab.title = domain;
+        }
+      }
+    } catch {
+      // Ignore unparseable URLs — button keeps its default label
     }
   }
 
   elements.enabledToggle.addEventListener("change", async () => {
     state.enabled = elements.enabledToggle.checked;
+    elements.hero.classList.toggle("is-paused", !state.enabled);
+    elements.pausedBadge.hidden = state.enabled;
     await saveState();
+
+    if (state.enabled) {
+      // If the current tab is on a blocked domain, redirect it immediately
+      const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (activeTab?.url) {
+        try {
+          const { hostname } = new URL(activeTab.url);
+          const h = hostname.toLowerCase();
+          const isBlocked = state.blockedDomains.some(
+            (d) => h === d || h.endsWith(`.${d}`)
+          );
+          if (isBlocked) {
+            chrome.runtime.sendMessage({
+              type: "redirect-tab",
+              tabId: activeTab.id,
+              hostname: h
+            }).catch(() => {});
+          }
+        } catch {
+          // Ignore URL parse errors
+        }
+      }
+    }
   });
 
   elements.blockCurrentTab.addEventListener("click", () => {
@@ -205,7 +250,7 @@ async function setup() {
       return;
     }
 
-    state.prompts = [...state.prompts, prompt];
+    state.prompts = [prompt, ...state.prompts];
     elements.promptInput.value = "";
     await saveState();
     render();

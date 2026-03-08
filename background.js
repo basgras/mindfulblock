@@ -154,6 +154,12 @@ chrome.runtime.onInstalled.addListener(async (details) => {
   if (!hasOwn(existing, "oceanHeroEnabled")) next.oceanHeroEnabled = true;
   if (!hasOwn(existing, "imageSearchEnabled")) next.imageSearchEnabled = false;
 
+  // welcomeSeen: false on fresh install so the welcome page shows onboarding;
+  // true for existing users upgrading from a version before this flag existed.
+  if (!hasOwn(existing, "welcomeSeen")) {
+    next.welcomeSeen = details.reason === "install" ? false : true;
+  }
+
   if (Object.keys(next).length > 0) {
     await chrome.storage.sync.set(next);
   }
@@ -193,6 +199,19 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
 
 // Sync context menu title on every service worker start
 syncContextMenuTitle();
+
+// Redirect a specific tab on demand (e.g. when Calm Guard is re-enabled from the popup)
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.type !== "redirect-tab") return;
+  getSettings().then((settings) => {
+    if (settings.prompts.length === 0) return;
+    const mindfulTarget = createMindfulSearchUrl(settings.prompts, settings);
+    const holdingUrl = createHoldingPageUrl(mindfulTarget, message.hostname);
+    return chrome.tabs.update(message.tabId, { url: holdingUrl });
+  }).catch((error) => {
+    console.error("Mindful Block: failed to redirect tab on re-enable", error);
+  });
+});
 
 // Main redirect listener
 chrome.webNavigation.onBeforeNavigate.addListener((details) => {

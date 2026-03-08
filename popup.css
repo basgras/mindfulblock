@@ -15,7 +15,7 @@
 body {
   margin: 0;
   min-width: 360px;
-  background: linear-gradient(180deg, #e9f2f8 0%, #f9f7f4 100%);
+  background: #F6FFFF;
   color: var(--text);
   font-family: "Source Sans 3", "Segoe UI", sans-serif;
 }
@@ -37,9 +37,8 @@ body {
 }
 
 .cloud-icon {
-  width: 44px;
-  height: 32px;
-  filter: drop-shadow(0 3px 10px rgba(36, 119, 179, 0.45));
+  width: 40px;
+  height: 40px;
   flex-shrink: 0;
 }
 
@@ -74,6 +73,7 @@ h2 {
   border: 1px solid var(--outline);
   border-radius: 16px;
   padding: 12px 14px;
+  overflow: hidden;
 }
 
 summary {
@@ -150,10 +150,15 @@ summary {
 }
 
 .primary-btn {
+  display: block;
+  text-align: center;
   background: var(--primary);
   color: white;
   width: 100%;
   border-radius: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .tonal-btn {
@@ -255,6 +260,32 @@ li span {
 #message[data-type="info"] {
   background: #e8f4fd;
   color: #1a6fa8;
+}
+
+/* Paused state */
+.hero.is-paused {
+  border-color: #e8c8a0;
+  background-color: #fdf8f2;
+}
+
+.hero.is-paused .cloud-icon {
+  opacity: 0.55;
+}
+
+.paused-badge {
+  font-family: "Nunito", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #9a6a1f;
+  background: #fdecd0;
+  border: 1px solid #e8c8a0;
+  border-radius: 99px;
+  padding: 2px 8px;
+  align-self: flex-start;
+  white-space: nowrap;
+  margin-left: auto;
 }
 
 .image-search-row {
