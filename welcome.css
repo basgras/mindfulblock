@@ -1,6 +1,6 @@
 :root {
   color-scheme: light;
-  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-family: "Source Sans 3", sans-serif;
   --primary: #2477b3;
   --primary-container: #d7ecff;
   --surface: #f9f7f4;
@@ -13,7 +13,7 @@
 body {
   margin: 0;
   color: var(--text);
-  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-family: "Source Sans 3", sans-serif;
   background: #F6FFFF;
 }
 
@@ -58,7 +58,7 @@ h2 {
 }
 
 .hero p {
-  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-family: "Source Sans 3", sans-serif;
   font-size: 0.9rem;
   color: #4a6578;
   margin-top: 2px;
@@ -79,7 +79,7 @@ h2 {
 }
 
 .pin-nudge p {
-  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-family: "Source Sans 3", sans-serif;
   font-size: 0.92rem;
   color: #4a6578;
   margin: 0;
@@ -92,7 +92,7 @@ h2 {
 }
 
 .card ol li {
-  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-family: "Source Sans 3", sans-serif;
   font-size: 0.92rem;
   margin-bottom: 6px;
   padding: 0;
@@ -110,7 +110,7 @@ h2 {
 }
 
 .switch-row p {
-  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-family: "Source Sans 3", sans-serif;
   font-size: 0.87rem;
   color: #4a6578;
   margin-top: 3px;
@@ -151,7 +151,7 @@ input[type="text"] {
   border: 1px solid var(--outline);
   border-radius: 8px;
   padding: 10px 12px;
-  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-family: "Source Sans 3", sans-serif;
   font-size: 0.9rem;
   color: var(--text);
   background: #fafdff;
@@ -200,7 +200,7 @@ input[type="text"]::placeholder {
 
 .list span {
   overflow-wrap: anywhere;
-  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-family: "Source Sans 3", sans-serif;
   font-size: 0.9rem;
 }
 
@@ -221,7 +221,7 @@ input[type="text"]::placeholder {
   z-index: 200;
   padding: 9px 16px;
   text-align: center;
-  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-family: "Source Sans 3", sans-serif;
   font-size: 0.88rem;
   font-weight: 600;
   background: #fdecea;
@@ -254,14 +254,14 @@ input[type="text"]::placeholder {
 }
 
 .engine-name {
-  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-family: "Source Sans 3", sans-serif;
   font-size: 0.92rem;
   font-weight: 600;
   color: var(--text);
 }
 
 .engine-sub {
-  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-family: "Source Sans 3", sans-serif;
   font-size: 0.8rem;
   color: #6a8899;
 }
@@ -275,7 +275,7 @@ input[type="text"]::placeholder {
 /* Footer */
 .site-footer {
   text-align: center;
-  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-family: "Source Sans 3", sans-serif;
   font-size: 0.82rem;
   color: #4a6578;
   padding-bottom: 4px;
