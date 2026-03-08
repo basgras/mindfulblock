@@ -15,7 +15,7 @@
 body {
   margin: 0;
   min-width: 360px;
-  background: linear-gradient(180deg, #e9f2f8 0%, #f9f7f4 100%);
+  background: #F6FFFF;
   color: var(--text);
   font-family: "Source Sans 3", "Segoe UI", sans-serif;
 }
@@ -39,7 +39,6 @@ body {
 .cloud-icon {
   width: 40px;
   height: 40px;
-  filter: drop-shadow(0 3px 10px rgba(36, 119, 179, 0.45));
   flex-shrink: 0;
 }
 
@@ -74,6 +73,7 @@ h2 {
   border: 1px solid var(--outline);
   border-radius: 16px;
   padding: 12px 14px;
+  overflow: hidden;
 }
 
 summary {
@@ -154,6 +154,14 @@ summary {
   color: white;
   width: 100%;
   border-radius: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.primary-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
 }
 
 .tonal-btn {
@@ -265,7 +273,6 @@ li span {
 
 .hero.is-paused .cloud-icon {
   opacity: 0.55;
-  filter: drop-shadow(0 2px 4px rgba(180, 130, 60, 0.15));
 }
 
 .paused-badge {

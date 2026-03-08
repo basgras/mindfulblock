@@ -123,16 +123,20 @@ async function setup() {
     prompts: sanitizePrompts(stored.prompts)
   };
 
-  // Set "Block current tab" button label and visibility based on current tab
+  // Set "Block current tab" button label, visibility, and state based on current tab
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (tab?.url) {
     const currentDomain = normalizeDomain(tab.url);
     if (currentDomain && isRedirectEngine(currentDomain)) {
-      elements.blockCurrentTab.hidden = true;
+      elements.blockCurrentTab.hidden = true;      // hide entirely on Ecosia/OceanHero
     } else if (currentDomain) {
       elements.blockCurrentTab.textContent = `Block ${currentDomain}`;
+      elements.blockCurrentTab.title = currentDomain; // tooltip for long domains
+    } else {
+      elements.blockCurrentTab.disabled = true;    // chrome://, new tab, etc.
     }
-    // If currentDomain is empty (e.g. chrome:// page), keep the generic label
+  } else {
+    elements.blockCurrentTab.disabled = true;      // no URL available
   }
 
   elements.enabledToggle.addEventListener("change", async () => {
@@ -214,7 +218,7 @@ async function setup() {
       return;
     }
 
-    state.prompts = [...state.prompts, prompt];
+    state.prompts = [prompt, ...state.prompts];
     elements.promptInput.value = "";
     await saveState();
     render();

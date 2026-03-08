@@ -171,7 +171,7 @@ async function setup() {
       return;
     }
 
-    state.prompts = [...state.prompts, prompt];
+    state.prompts = [prompt, ...state.prompts];
     elements.promptInput.value = "";
     await saveState();
     render();

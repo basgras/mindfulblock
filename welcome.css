@@ -14,7 +14,7 @@ body {
   margin: 0;
   color: var(--text);
   font-family: "Source Sans 3", "Segoe UI", sans-serif;
-  background: radial-gradient(circle at top, #e2eef8, #d0e6f6 40%, #bfd8ee);
+  background: #F6FFFF;
 }
 
 .container {
@@ -31,6 +31,7 @@ body {
   border-radius: 20px;
   padding: 20px;
   box-shadow: 0 4px 14px rgba(34, 91, 134, 0.07);
+  overflow: hidden;
 }
 
 .hero { display: flex; gap: 12px; align-items: center; }
@@ -38,7 +39,6 @@ body {
 .hero-cloud {
   width: 56px;
   height: 56px;
-  filter: drop-shadow(0 4px 12px rgba(36, 119, 179, 0.45));
   flex-shrink: 0;
 }
 
@@ -264,4 +264,24 @@ input[type="text"]::placeholder {
   font-family: "Source Sans 3", "Segoe UI", sans-serif;
   font-size: 0.8rem;
   color: #6a8899;
+}
+
+/* Merged welcome card: spacing between hero header, quick-start, and pin nudge */
+.welcome-card .hero + h2,
+.welcome-card ol + .pin-nudge {
+  margin-top: 16px;
+}
+
+/* Footer */
+.site-footer {
+  text-align: center;
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-size: 0.82rem;
+  color: #4a6578;
+  padding-bottom: 4px;
+}
+
+.text-link {
+  color: var(--primary);
+  text-decoration: none;
 }
