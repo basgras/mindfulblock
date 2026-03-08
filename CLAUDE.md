@@ -24,10 +24,10 @@ It is part of the **Calm & Fluffy** brand — a newsletter whose logo is a smili
 | File | Purpose |
 |------|---------|
 | `manifest.json` | Extension manifest and permissions |
-| `defaults.js` | Centralized default settings and default Search ideas list |
+| `defaults.js` | Centralized default settings, default Search ideas list, and shared utility functions (`normalizeDomain`, `sanitizePrompts`, `sanitizeDomains`, `hasOwn`) |
 | `background.js` | Service worker: redirects, install/update behavior, context menu |
 | `popup.html/css/js` | Compact popup interface (opened from toolbar icon) |
-| `welcome.html/css/js` | Onboarding page and full settings (also used as `options_page`) |
+| `welcome.html/css/js` | Onboarding page and full settings (also used as `options_page`); shows a welcome/quick-start view on first open, then a compact settings view on subsequent visits |
 | `redirect.html/css/js` | Holding page shown briefly before forwarding to search engine |
 
 ---
@@ -42,6 +42,8 @@ It is part of the **Calm & Fluffy** brand — a newsletter whose logo is a smili
 | `ecosiaEnabled` | boolean | `true` | |
 | `oceanHeroEnabled` | boolean | `true` | At least one must always be true |
 | `imageSearchEnabled` | boolean | `false` | Global; affects both engines |
+| `welcomeSeen` | boolean | `false` (install) / `true` (update) | Controls whether welcome.html shows onboarding or the compact settings view |
+| `introducedPrompts` | string[] | All defaults on install | Internal tracking set; prevents previously-deleted default prompts from being silently re-added on extension updates |
 
 ---
 
@@ -58,8 +60,8 @@ It is part of the **Calm & Fluffy** brand — a newsletter whose logo is a smili
 
 - **At least one search engine must always be active.** If a user tries to disable the last one, prevent it and show a toast: `"At least one search engine must be active. :-)"`
 - **Ecosia and OceanHero can never be added to the blocked domains list.** If attempted, show a toast: `"You can't block the redirect search engines. :-)"`
-- **The "Block current tab" button must be hidden** when the user is on an Ecosia or OceanHero domain
-- **Never overwrite user settings on extension update.** On update, only append new default prompts that don't already exist in the user's list. Never touch blockedDomains, engine toggles, or other preferences
+- **The "Block current tab" button shows an error toast** when the user is on an Ecosia or OceanHero domain — the button is not hidden, but the add attempt is blocked with the message `"You can't block the redirect search engines. :-)"`
+- **Never overwrite user settings on extension update.** On update, only append genuinely new default prompts (those not previously introduced via `introducedPrompts`). Never touch blockedDomains, engine toggles, or other preferences
 - **Image search toggle does not affect which engines are enabled.** It only changes the URL format for whichever engines are currently active
 
 ---
@@ -68,7 +70,7 @@ It is part of the **Calm & Fluffy** brand — a newsletter whose logo is a smili
 
 - **Nunito** (Google Fonts) — headings, app title, section headers, button labels
 - **Source Sans 3** (Google Fonts) — body text, list items, placeholder text, descriptions
-- Both are already imported in `popup.html` and `welcome.html`
+- Both fonts are loaded via a local `fonts/fonts.css` file referenced in `popup.html`, `welcome.html`, and `redirect.html`
 - Do not introduce other fonts. Do not use system fonts or paid fonts.
 
 ---
@@ -82,21 +84,25 @@ It is part of the **Calm & Fluffy** brand — a newsletter whose logo is a smili
   - **Sites to avoid** — the blocked domains list
   - **Search ideas** — the list of redirect queries (not "prompts", not "mindful prompts")
   - **Search engines** — the Ecosia/OceanHero section
-- Tagline: *"Your calm and fluffy cloud for better browsing."*
+- Tagline (welcome page): *"Your calm and fluffy cloud for better browsing."*
+- Popup subtitle (distinct from tagline): *"Your calm and fluffy way to make every distraction count."*
 - Quick Start copy (verbatim, do not rewrite):
   1. Add the sites that distract you.
   2. When you visit one, Mindful Block redirects you to Ecosia or OceanHero instead.
-  3. Those search engines plant trees and remove plastic from the ocean. Every search counts.
+  3. Those search engines plant trees and remove plastic from the ocean. Every search contributes to a better world.
 
 ---
 
 ## UI/UX conventions
 
-- Error and validation messages are shown as **toast notifications** at the top of the popup, visible regardless of which sections are collapsed. They auto-dismiss after 3 seconds.
+- Error and validation messages are shown as **toast notifications** at the top of the page (popup and welcome page), visible regardless of which sections are collapsed. They auto-dismiss after 3 seconds.
 - The popup uses collapsible `<details>` sections for Sites to avoid, Search engines, and Search ideas
-- The `<img id="app-icon">` in the header is a placeholder SVG cloud — a real icon will be added later. Do not remove or restructure this element.
+- The welcome page settings section also uses collapsible `<details>` sections with the same structure
+- The `<img id="app-icon">` in the popup header and `<img id="app-icon">` in the welcome header both use `icons/icon-128.png` (real PNG icon). Do not remove or restructure these elements.
+- The "Block current tab" button label changes dynamically to `"Block [domain]"` when the current tab has a detectable domain
 - Button hierarchy:
-  - **Primary action (Add):** accent blue, white Nunito semibold label
+  - **Primary action (Block current tab):** accent blue (`var(--primary)`), white Nunito semibold label, full-width (`.primary-btn`)
+  - **Secondary action (Add):** accent blue, white Nunito semibold label, inline (`.tonal-btn`)
   - **Destructive secondary (Remove):** muted rose tint (`#FDECEA` bg, `#C0392B` text)
 - Toggle switches use the `.md-switch` class pattern with a `.track` span
 
@@ -104,6 +110,13 @@ It is part of the **Calm & Fluffy** brand — a newsletter whose logo is a smili
 
 ## What's pending (do not implement unless explicitly asked)
 
-- Real app icon (Bas will supply the file)
 - Context menu right-click to pause/resume Calm Guard (already implemented in `background.js`)
 - Settings persistence across updates (already implemented in `background.js`)
+
+---
+
+## Reviewer notes
+
+- **"Block current tab" visibility rule**: CLAUDE.md previously stated the button "must be hidden" when the user is on an Ecosia or OceanHero domain. The actual implementation in `popup.js` does not hide the button — it shows an error toast when the button is clicked while on a redirect engine domain. The rule has been updated to reflect current behavior, but the original intent (hiding the button proactively) may be worth revisiting.
+- **Popup tagline vs. welcome tagline**: The popup header uses `"Your calm and fluffy way to make every distraction count."` while the welcome page uses `"Your calm and fluffy cloud for better browsing."` These are different; it is unclear whether both are intentional or whether one should be brought in line with the other.
+- **Quick Start item 3 changed**: The previous documented copy said `"Every search counts."` The actual HTML reads `"Every search contributes to a better world."` This has been corrected in the copy guidelines above.
