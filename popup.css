@@ -1,6 +1,6 @@
 :root {
   color-scheme: light;
-  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-family: "Source Sans 3", sans-serif;
   --primary: #2477b3;
   --primary-container: #d7ecff;
   --surface: #f9f7f4;
@@ -17,7 +17,7 @@ body {
   min-width: 360px;
   background: #F6FFFF;
   color: var(--text);
-  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-family: "Source Sans 3", sans-serif;
 }
 
 .app-shell {
@@ -63,7 +63,7 @@ h2 {
 
 .hero p,
 .switch-row p {
-  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-family: "Source Sans 3", sans-serif;
   color: #4a6578;
   font-size: 0.82rem;
 }
@@ -179,7 +179,7 @@ input[type="text"] {
   border-radius: 8px;
   padding: 9px 10px;
   background: #fafdff;
-  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-family: "Source Sans 3", sans-serif;
   font-size: 0.88rem;
   color: var(--text);
 }
@@ -214,7 +214,7 @@ li:last-child {
 
 li span {
   overflow-wrap: anywhere;
-  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-family: "Source Sans 3", sans-serif;
   font-size: 0.84rem;
 }
 
@@ -231,7 +231,7 @@ li span {
   text-align: center;
   color: var(--primary);
   text-decoration: none;
-  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-family: "Source Sans 3", sans-serif;
   font-size: 0.84rem;
 }
 
@@ -243,7 +243,7 @@ li span {
   z-index: 200;
   padding: 9px 16px;
   text-align: center;
-  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-family: "Source Sans 3", sans-serif;
   font-size: 0.82rem;
   font-weight: 600;
   background: #fdecea;
@@ -302,14 +302,14 @@ li span {
 }
 
 .engine-name {
-  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-family: "Source Sans 3", sans-serif;
   font-size: 0.88rem;
   font-weight: 600;
   color: var(--text);
 }
 
 .engine-sub {
-  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  font-family: "Source Sans 3", sans-serif;
   font-size: 0.76rem;
   color: #6a8899;
 }
