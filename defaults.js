@@ -97,7 +97,6 @@ export const DEFAULT_PROMPTS = [
   "how to reduce fast fashion impact",
   "how to advocate for climate policy",
   "how to start a neighborhood tool library",
-  "how to support community fridges",
   "how to make a positive impact today"
 ];
 

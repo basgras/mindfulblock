@@ -94,13 +94,13 @@ async function addCurrentTabDomain() {
   }
 
   if (!tabUrl || !["http:", "https:"].includes(tabUrl.protocol)) {
-    showMessage("Only regular web pages can be blocked.");
+    showMessage("Only regular web sites can be blocked.");
     return;
   }
 
   const domain = normalizeDomain(tab.url);
   if (!domain) {
-    showMessage("Only regular web pages can be blocked.");
+    showMessage("Only regular web sites can be blocked.");
     return;
   }
 
@@ -110,7 +110,7 @@ async function addCurrentTabDomain() {
   }
 
   if (state.blockedDomains.includes(domain)) {
-    showMessage(`Already blocking ${domain}.`);
+    showMessage(`Already blocking ${domain}. :-)`);
     return;
   }
 
@@ -131,7 +131,6 @@ async function setup() {
     prompts: sanitizePrompts(stored.prompts)
   };
 
-  // Set button label when on a regular web page (label stays "Block current tab" otherwise)
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (tab?.url) {
     try {
@@ -144,7 +143,6 @@ async function setup() {
         }
       }
     } catch {
-      // Ignore unparseable URLs — button keeps its default label
     }
   }
 
@@ -155,7 +153,6 @@ async function setup() {
     await saveState();
 
     if (state.enabled) {
-      // If the current tab is on a blocked domain, redirect it immediately
       const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
       if (activeTab?.url) {
         try {
@@ -172,7 +169,6 @@ async function setup() {
             }).catch(() => {});
           }
         } catch {
-          // Ignore URL parse errors
         }
       }
     }
@@ -226,7 +222,7 @@ async function setup() {
     }
 
     if (state.blockedDomains.includes(domain)) {
-      showMessage("Domain already in block list.");
+      showMessage("Domain already in block list. :-)");
       return;
     }
 

@@ -103,7 +103,7 @@ async function setup() {
   elements.enabledToggle.addEventListener("change", async () => {
     state.enabled = elements.enabledToggle.checked;
     await saveState();
-    showMessage(state.enabled ? "Protection enabled." : "Protection paused.", "info");
+    showMessage(state.enabled ? "Calm Guard enabled." : "Calm Guard paused.", "info");
   });
 
   elements.toggleEcosia.addEventListener("change", async () => {
@@ -147,7 +147,7 @@ async function setup() {
     }
 
     if (state.blockedDomains.includes(domain)) {
-      showMessage("Domain already in block list.");
+      showMessage("Domain already in block list. :-)");
       return;
     }
 

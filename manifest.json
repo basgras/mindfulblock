@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Mindful Block",
-  "version": "1.1.2",
-  "description": "Redirect blocked sites to mindful searches on mission-driven search engines.",
+  "version": "1.0",
+  "description": "Redirects distracting sites to search engines that plant trees and clean the ocean.",
   "permissions": [
     "storage",
     "tabs",
