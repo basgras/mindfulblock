@@ -84,8 +84,7 @@ It is part of the **Calm & Fluffy** brand — a newsletter whose logo is a smili
   - **Sites to avoid** — the blocked domains list
   - **Search ideas** — the list of redirect queries (not "prompts", not "mindful prompts")
   - **Search engines** — the Ecosia/OceanHero section
-- Tagline (welcome page): *"Your calm and fluffy cloud for better browsing."*
-- Popup subtitle (distinct from tagline): *"Your calm and fluffy way to make every distraction count."*
+- Tagline: *"Your calm and fluffy way to make every distraction count."*
 - Quick Start copy (verbatim, do not rewrite):
   1. Add the sites that distract you.
   2. When you visit one, Mindful Block redirects you to Ecosia or OceanHero instead.
@@ -108,15 +107,8 @@ It is part of the **Calm & Fluffy** brand — a newsletter whose logo is a smili
 
 ---
 
-## What's pending (do not implement unless explicitly asked)
+## Already implemented — do not re-implement
 
 - Context menu right-click to pause/resume Calm Guard (already implemented in `background.js`)
 - Settings persistence across updates (already implemented in `background.js`)
 
----
-
-## Reviewer notes
-
-- **"Block current tab" visibility rule**: CLAUDE.md previously stated the button "must be hidden" when the user is on an Ecosia or OceanHero domain. The actual implementation in `popup.js` does not hide the button — it shows an error toast when the button is clicked while on a redirect engine domain. The rule has been updated to reflect current behavior, but the original intent (hiding the button proactively) may be worth revisiting.
-- **Popup tagline vs. welcome tagline**: The popup header uses `"Your calm and fluffy way to make every distraction count."` while the welcome page uses `"Your calm and fluffy cloud for better browsing."` These are different; it is unclear whether both are intentional or whether one should be brought in line with the other.
-- **Quick Start item 3 changed**: The previous documented copy said `"Every search counts."` The actual HTML reads `"Every search contributes to a better world."` This has been corrected in the copy guidelines above.
