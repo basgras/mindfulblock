@@ -149,9 +149,11 @@ async function setupReviewNudge(blockedDomainsCount) {
     await chrome.storage.local.set({ reviewNudge: nudge });
   });
 
-  elements.reviewLink.addEventListener("click", async () => {
+  elements.reviewLink.addEventListener("click", async (e) => {
+    e.preventDefault();
     nudge = { ...nudge, reviewClicked: true };
     await chrome.storage.local.set({ reviewNudge: nudge });
+    window.open(e.currentTarget.href, "_blank");
   });
 }
 

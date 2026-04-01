@@ -347,3 +347,7 @@ li span {
   line-height: 1;
   flex-shrink: 0;
 }
+
+.review-nudge[hidden] {
+  display: none;
+}
