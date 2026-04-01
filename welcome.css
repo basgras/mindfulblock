@@ -281,6 +281,12 @@ input[type="text"]::placeholder {
   padding-bottom: 4px;
 }
 
+.help-hint {
+  margin: 0 0 4px;
+  color: #7a9aaf;
+  font-size: 0.78rem;
+}
+
 .text-link {
   color: var(--primary);
   text-decoration: none;
