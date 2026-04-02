@@ -16,7 +16,10 @@ const elements = {
   promptForm: document.getElementById("promptForm"),
   promptInput: document.getElementById("promptInput"),
   promptList: document.getElementById("promptList"),
-  message: document.getElementById("message")
+  message: document.getElementById("message"),
+  reviewNudge: document.getElementById("review-nudge"),
+  reviewLink: document.getElementById("review-link"),
+  reviewDismiss: document.getElementById("review-dismiss")
 };
 
 let state = { ...DEFAULT_SETTINGS };
@@ -120,6 +123,45 @@ async function addCurrentTabDomain() {
   showMessage(`Blocked ${domain}`, "info");
 }
 
+async function setupReviewNudge(blockedDomainsCount) {
+  const ONE_DAY = 24 * 60 * 60 * 1000;
+  const stored = await chrome.storage.local.get("reviewNudge");
+  let nudge = stored.reviewNudge || {};
+  const now = Date.now();
+
+  if (!nudge.installDate) {
+    nudge.installDate = now;
+    await chrome.storage.local.set({ reviewNudge: nudge });
+  }
+
+  if (nudge.reviewClicked) return;
+  if (blockedDomainsCount < 1) return;
+  if (now - nudge.installDate < ONE_DAY) return;
+  if (nudge.nextShowDate && now < nudge.nextShowDate) return;
+
+  elements.reviewNudge.hidden = false;
+
+  elements.reviewDismiss.addEventListener("click", async () => {
+    elements.reviewNudge.hidden = true;
+    const dismissCount = (nudge.dismissCount || 0) + 1;
+    const delay = dismissCount === 1 ? 7 * ONE_DAY : 30 * ONE_DAY;
+    nudge = { ...nudge, dismissCount, nextShowDate: now + delay };
+    await chrome.storage.local.set({ reviewNudge: nudge });
+  });
+
+  elements.reviewLink.addEventListener("click", async (e) => {
+    e.preventDefault();
+    const href = e.currentTarget.href;
+    try {
+      nudge = { ...nudge, reviewClicked: true };
+      await chrome.storage.local.set({ reviewNudge: nudge });
+      chrome.tabs.create({ url: href });
+    } catch (err) {
+      console.error("Mindful Block: failed to save review click or open review tab.", err);
+    }
+  });
+}
+
 async function setup() {
   const stored = await chrome.storage.sync.get(DEFAULT_SETTINGS);
   state = {
@@ -130,6 +172,8 @@ async function setup() {
     blockedDomains: sanitizeDomains(stored.blockedDomains),
     prompts: sanitizePrompts(stored.prompts)
   };
+
+  await setupReviewNudge(state.blockedDomains.length);
 
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (tab?.url) {

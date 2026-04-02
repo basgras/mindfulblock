@@ -262,7 +262,6 @@ li span {
   color: #1a6fa8;
 }
 
-/* Paused state */
 .hero.is-paused {
   border-color: #e8c8a0;
   background-color: #fdf8f2;
@@ -312,4 +311,42 @@ li span {
   font-family: "Source Sans 3", sans-serif;
   font-size: 0.76rem;
   color: #6a8899;
+}
+
+.review-nudge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: var(--primary-container);
+  border: 1px solid var(--outline);
+  border-radius: 12px;
+  padding: 8px 12px;
+}
+
+.review-nudge p {
+  margin: 0;
+  font-family: "Source Sans 3", sans-serif;
+  font-size: 0.8rem;
+  color: var(--text);
+}
+
+.review-nudge a {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+.review-dismiss {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #4a6578;
+  font-size: 0.9rem;
+  padding: 2px 4px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.review-nudge[hidden] {
+  display: none;
 }

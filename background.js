@@ -44,7 +44,6 @@ function createMindfulSearchUrl(prompts, settings) {
   const enabledEngines = [];
   if (settings.ecosiaEnabled) enabledEngines.push("ecosia");
   if (settings.oceanHeroEnabled) enabledEngines.push("oceanhero");
-  // Fallback: if somehow both are disabled, use ecosia
   const engines = enabledEngines.length > 0 ? enabledEngines : ["ecosia"];
 
   const engineKey = randomItem(engines);
@@ -97,7 +96,6 @@ async function maybeRedirect(details) {
   await chrome.tabs.update(details.tabId, { url: holdingUrl });
 }
 
-// Sync context menu title with current enabled state
 async function syncContextMenuTitle() {
   const { enabled } = await chrome.storage.sync.get({ enabled: true });
   try {
@@ -105,41 +103,30 @@ async function syncContextMenuTitle() {
       title: enabled ? "Pause Calm Guard" : "Resume Calm Guard"
     });
   } catch {
-    // Menu item doesn't exist yet — will be created in onInstalled
   }
 }
 
-// On install/update: initialize only missing settings, append new default prompts
 chrome.runtime.onInstalled.addListener(async (details) => {
   const existing = await chrome.storage.sync.get();
   const next = {};
 
-  // Only set enabled if not already stored
   if (typeof existing.enabled !== "boolean") {
     next.enabled = DEFAULT_SETTINGS.enabled;
   }
 
-  // Only set blockedDomains if never initialized — never overwrite on update
   if (!hasOwn(existing, "blockedDomains")) {
     next.blockedDomains = [...DEFAULT_SETTINGS.blockedDomains];
   }
 
-  // Prompts: initialize if missing, or append only genuinely new default prompts
-  // introducedPrompts tracks which defaults have ever been auto-added, so deleted prompts
-  // are never silently restored on future updates.
   if (!hasOwn(existing, "prompts") || !Array.isArray(existing.prompts)) {
-    // Fresh install — seed both the user list and introducedPrompts with all defaults
     next.prompts = [...DEFAULT_SETTINGS.prompts];
     next.introducedPrompts = [...DEFAULT_PROMPTS];
   } else {
     const existingPrompts = sanitizePrompts(existing.prompts);
 
     if (!hasOwn(existing, "introducedPrompts") || !Array.isArray(existing.introducedPrompts)) {
-      // Existing install that predates introducedPrompts — register all current defaults
-      // as already introduced so they are never re-added. Do not touch the user's list.
       next.introducedPrompts = [...DEFAULT_PROMPTS];
     } else {
-      // Normal update — only add prompts that have never been introduced before
       const introducedSet = new Set(existing.introducedPrompts);
       const genuinelyNew = DEFAULT_PROMPTS.filter((p) => !introducedSet.has(p));
       if (genuinelyNew.length > 0) {
@@ -149,13 +136,10 @@ chrome.runtime.onInstalled.addListener(async (details) => {
     }
   }
 
-  // Engine toggles and image search: only set if never stored before
   if (!hasOwn(existing, "ecosiaEnabled")) next.ecosiaEnabled = true;
   if (!hasOwn(existing, "oceanHeroEnabled")) next.oceanHeroEnabled = true;
   if (!hasOwn(existing, "imageSearchEnabled")) next.imageSearchEnabled = false;
 
-  // welcomeSeen: false on fresh install so the welcome page shows onboarding;
-  // true for existing users upgrading from a version before this flag existed.
   if (!hasOwn(existing, "welcomeSeen")) {
     next.welcomeSeen = details.reason === "install" ? false : true;
   }
@@ -164,7 +148,6 @@ chrome.runtime.onInstalled.addListener(async (details) => {
     await chrome.storage.sync.set(next);
   }
 
-  // Create context menu (remove stale items first)
   chrome.contextMenus.removeAll(() => {
     chrome.contextMenus.create({
       id: CONTEXT_MENU_ID,
@@ -179,7 +162,6 @@ chrome.runtime.onInstalled.addListener(async (details) => {
   }
 });
 
-// Keep context menu title in sync when enabled state changes from any source
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === "sync" && changes.enabled !== undefined) {
     const newEnabled = changes.enabled.newValue;
@@ -189,18 +171,14 @@ chrome.storage.onChanged.addListener((changes, area) => {
   }
 });
 
-// Toggle enabled state when context menu item is clicked
 chrome.contextMenus.onClicked.addListener(async (info) => {
   if (info.menuItemId !== CONTEXT_MENU_ID) return;
   const { enabled } = await chrome.storage.sync.get({ enabled: true });
   await chrome.storage.sync.set({ enabled: !enabled });
-  // storage.onChanged listener above will update the title
 });
 
-// Sync context menu title on every service worker start
 syncContextMenuTitle();
 
-// Redirect a specific tab on demand (e.g. when Calm Guard is re-enabled from the popup)
 chrome.runtime.onMessage.addListener((message) => {
   if (message.type !== "redirect-tab") return;
   getSettings().then((settings) => {
@@ -213,7 +191,6 @@ chrome.runtime.onMessage.addListener((message) => {
   });
 });
 
-// Main redirect listener
 chrome.webNavigation.onBeforeNavigate.addListener((details) => {
   maybeRedirect(details).catch((error) => {
     console.error("Mindful Block redirect failed", error);
