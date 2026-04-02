@@ -151,9 +151,14 @@ async function setupReviewNudge(blockedDomainsCount) {
 
   elements.reviewLink.addEventListener("click", async (e) => {
     e.preventDefault();
-    nudge = { ...nudge, reviewClicked: true };
-    await chrome.storage.local.set({ reviewNudge: nudge });
-    chrome.tabs.create({ url: e.currentTarget.href });
+    const href = e.currentTarget.href;
+    try {
+      nudge = { ...nudge, reviewClicked: true };
+      await chrome.storage.local.set({ reviewNudge: nudge });
+      chrome.tabs.create({ url: href });
+    } catch (err) {
+      console.error("Mindful Block: failed to save review click or open review tab.", err);
+    }
   });
 }
 
