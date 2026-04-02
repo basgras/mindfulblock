@@ -48,7 +48,7 @@ function createMindfulSearchUrl(prompts, settings) {
 
   const engineKey = randomItem(engines);
   const urlMap = settings.imageSearchEnabled ? ENGINE_IMAGE_URLS : ENGINE_WEB_URLS;
-  return `${urlMap[engineKey]}${encodeURIComponent(query)}`;
+  return { url: `${urlMap[engineKey]}${encodeURIComponent(query)}`, engineKey };
 }
 
 function createHoldingPageUrl(targetUrl, blockedHostname) {
@@ -90,8 +90,12 @@ async function maybeRedirect(details) {
     return;
   }
 
-  const mindfulTarget = createMindfulSearchUrl(settings.prompts, settings);
+  const { url: mindfulTarget, engineKey } = createMindfulSearchUrl(settings.prompts, settings);
   const holdingUrl = createHoldingPageUrl(mindfulTarget, hostname);
+
+  const counterKey = engineKey === "ecosia" ? "ecosiaCount" : "oceanCount";
+  const counts = await chrome.storage.local.get({ ecosiaCount: 0, oceanCount: 0 });
+  await chrome.storage.local.set({ [counterKey]: (counts[counterKey] || 0) + 1 });
 
   await chrome.tabs.update(details.tabId, { url: holdingUrl });
 }
@@ -181,10 +185,13 @@ syncContextMenuTitle();
 
 chrome.runtime.onMessage.addListener((message) => {
   if (message.type !== "redirect-tab") return;
-  getSettings().then((settings) => {
+  getSettings().then(async (settings) => {
     if (settings.prompts.length === 0) return;
-    const mindfulTarget = createMindfulSearchUrl(settings.prompts, settings);
+    const { url: mindfulTarget, engineKey } = createMindfulSearchUrl(settings.prompts, settings);
     const holdingUrl = createHoldingPageUrl(mindfulTarget, message.hostname);
+    const counterKey = engineKey === "ecosia" ? "ecosiaCount" : "oceanCount";
+    const counts = await chrome.storage.local.get({ ecosiaCount: 0, oceanCount: 0 });
+    await chrome.storage.local.set({ [counterKey]: (counts[counterKey] || 0) + 1 });
     return chrome.tabs.update(message.tabId, { url: holdingUrl });
   }).catch((error) => {
     console.error("Mindful Block: failed to redirect tab on re-enable", error);

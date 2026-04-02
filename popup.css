@@ -350,3 +350,46 @@ li span {
 .review-nudge[hidden] {
   display: none;
 }
+
+.impact-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#impact-metrics {
+  display: flex;
+  gap: 16px;
+}
+
+.impact-metric {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+}
+
+.impact-number {
+  font-family: "Nunito", sans-serif;
+  font-weight: 800;
+  font-size: 1.6rem;
+  color: var(--primary);
+  line-height: 1;
+}
+
+.impact-label {
+  font-family: "Source Sans 3", sans-serif;
+  font-size: 0.8rem;
+  color: #4a6578;
+}
+
+#impact-placeholder {
+  font-family: "Source Sans 3", sans-serif;
+  font-size: 0.84rem;
+  color: #4a6578;
+  font-style: italic;
+}
+
+.impact-share-btn {
+  align-self: flex-start;
+}
