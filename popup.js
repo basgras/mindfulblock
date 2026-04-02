@@ -153,7 +153,7 @@ async function setupReviewNudge(blockedDomainsCount) {
     e.preventDefault();
     nudge = { ...nudge, reviewClicked: true };
     await chrome.storage.local.set({ reviewNudge: nudge });
-    window.open(e.currentTarget.href, "_blank");
+    chrome.tabs.create({ url: e.currentTarget.href });
   });
 }
 
