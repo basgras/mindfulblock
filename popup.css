@@ -262,7 +262,6 @@ li span {
   color: #1a6fa8;
 }
 
-/* Paused state */
 .hero.is-paused {
   border-color: #e8c8a0;
   background-color: #fdf8f2;
