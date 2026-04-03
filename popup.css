@@ -390,3 +390,50 @@ li span {
 .impact-share-btn {
   align-self: flex-start;
 }
+
+.impact-info-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  margin-left: auto;
+  align-self: flex-start;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #7a97ab;
+  line-height: 1;
+  position: relative;
+  transition: color 0.15s ease;
+}
+
+.impact-info-btn:hover,
+.impact-info-btn:focus-visible {
+  color: #4a6578;
+  outline: none;
+}
+
+.impact-tooltip {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 220px;
+  background: #fffdf9;
+  border: 1px solid var(--outline);
+  border-radius: 10px;
+  padding: 8px 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-family: "Source Sans 3", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: #4a6578;
+  line-height: 1.45;
+  text-align: left;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.impact-info-btn:hover .impact-tooltip,
+.impact-info-btn:focus-visible .impact-tooltip {
+  display: block;
+}
