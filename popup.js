@@ -20,12 +20,8 @@ const elements = {
   reviewNudge: document.getElementById("review-nudge"),
   reviewLink: document.getElementById("review-link"),
   reviewDismiss: document.getElementById("review-dismiss"),
-  impactMetrics: document.getElementById("impact-metrics"),
-  impactTrees: document.getElementById("impact-trees"),
-  impactBottles: document.getElementById("impact-bottles"),
   treesCount: document.getElementById("trees-count"),
   bottlesCount: document.getElementById("bottles-count"),
-  impactPlaceholder: document.getElementById("impact-placeholder"),
   shareImpact: document.getElementById("shareImpact")
 };
 
@@ -175,15 +171,10 @@ async function renderImpact() {
 
   const trees = Math.floor(ecosiaCount / 50);
   const bottles = Math.floor(oceanCount / 5);
-  const anyWholeImpact = trees > 0 || bottles > 0;
 
-  elements.impactTrees.hidden = ecosiaCount === 0;
   elements.treesCount.textContent = trees;
-  elements.impactBottles.hidden = oceanCount === 0;
   elements.bottlesCount.textContent = bottles;
-  elements.impactPlaceholder.hidden = anyWholeImpact;
-  elements.impactMetrics.hidden = !anyWholeImpact;
-  elements.shareImpact.hidden = !anyWholeImpact;
+  elements.shareImpact.hidden = trees === 0 && bottles === 0;
 }
 
 async function setup() {
@@ -335,7 +326,7 @@ async function setup() {
       firstLine = `My procrastination cleaned ${bottles} ${bottles === 1 ? "bottle" : "bottles"} from the ocean so far 🐳`;
     }
 
-    const shareMessage = `${firstLine}\n\nImagine the impact we can have together\nhttps://mindfulblock.calmfluffy.cloud ☀`;
+    const shareMessage = `${firstLine}\n\nImagine the impact we can have together ☀️\nhttps://mindfulblock.calmfluffy.cloud`;
 
     try {
       await navigator.clipboard.writeText(shareMessage);

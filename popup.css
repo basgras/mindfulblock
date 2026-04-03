@@ -383,13 +383,6 @@ li span {
   color: #4a6578;
 }
 
-#impact-placeholder {
-  font-family: "Source Sans 3", sans-serif;
-  font-size: 0.84rem;
-  color: #4a6578;
-  font-style: italic;
-}
-
 .impact-share-btn {
   align-self: flex-start;
 }
