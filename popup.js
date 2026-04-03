@@ -1,4 +1,5 @@
 import { DEFAULT_SETTINGS, normalizeDomain, sanitizeDomains, sanitizePrompts } from "./defaults.js";
+import { renderImpact, setupShareImpact } from "./impact.js";
 
 const REDIRECT_ENGINES = ["ecosia.org", "oceanhero.today"];
 
@@ -166,19 +167,6 @@ async function setupReviewNudge(blockedDomainsCount) {
   });
 }
 
-async function renderImpact() {
-  const { ecosiaCount = 0, oceanCount = 0 } =
-    await chrome.storage.local.get({ ecosiaCount: 0, oceanCount: 0 });
-
-  const trees = Math.floor(ecosiaCount / 50);
-  const bottles = Math.floor(oceanCount / 5);
-
-  elements.treesCount.textContent = trees;
-  elements.bottlesCount.textContent = bottles;
-  elements.shareImpact.hidden = trees === 0 && bottles === 0;
-  elements.impactInfo.hidden = trees === 0 && bottles === 0;
-}
-
 async function setup() {
   const stored = await chrome.storage.sync.get(DEFAULT_SETTINGS);
   state = {
@@ -313,34 +301,9 @@ async function setup() {
     render();
   });
 
-  elements.shareImpact.addEventListener("click", async () => {
-    const { ecosiaCount = 0, oceanCount = 0 } =
-      await chrome.storage.local.get({ ecosiaCount: 0, oceanCount: 0 });
-    const trees = Math.floor(ecosiaCount / 50);
-    const bottles = Math.floor(oceanCount / 5);
+  setupShareImpact(elements.shareImpact, showMessage);
 
-    if (trees === 0 && bottles === 0) return;
-
-    let firstLine;
-    if (trees > 0 && bottles > 0) {
-      firstLine = `My procrastination planted ${trees} ${trees === 1 ? "tree" : "trees"} and cleaned ${bottles} ${bottles === 1 ? "bottle" : "bottles"} from the ocean so far 🌳 🐳`;
-    } else if (trees > 0) {
-      firstLine = `My procrastination planted ${trees} ${trees === 1 ? "tree" : "trees"} so far 🌳`;
-    } else {
-      firstLine = `My procrastination cleaned ${bottles} ${bottles === 1 ? "bottle" : "bottles"} from the ocean so far 🐳`;
-    }
-
-    const shareMessage = `${firstLine}\n\nImagine the impact we can have together ☀️\nhttps://mindfulblock.calmfluffy.cloud`;
-
-    try {
-      await navigator.clipboard.writeText(shareMessage);
-      showMessage("Copied to clipboard!", "info");
-    } catch {
-      showMessage("Could not copy to clipboard.", "error");
-    }
-  });
-
-  await renderImpact();
+  await renderImpact(elements);
   render();
 }
 

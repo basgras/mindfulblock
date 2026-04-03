@@ -1,4 +1,5 @@
 import { DEFAULT_SETTINGS, normalizeDomain, sanitizeDomains, sanitizePrompts } from "./defaults.js";
+import { renderImpact, setupShareImpact } from "./impact.js";
 
 const REDIRECT_ENGINES = ["ecosia.org", "oceanhero.today"];
 
@@ -13,7 +14,11 @@ const elements = {
   promptForm: document.getElementById("promptForm"),
   promptInput: document.getElementById("promptInput"),
   promptList: document.getElementById("promptList"),
-  message: document.getElementById("message")
+  message: document.getElementById("message"),
+  treesCount: document.getElementById("trees-count"),
+  bottlesCount: document.getElementById("bottles-count"),
+  shareImpact: document.getElementById("shareImpact"),
+  impactInfo: document.getElementById("impactInfo")
 };
 
 let state = { ...DEFAULT_SETTINGS };
@@ -79,7 +84,7 @@ function render() {
 }
 
 async function setup() {
-  const stored = await chrome.storage.sync.get({ ...DEFAULT_SETTINGS, welcomeSeen: false });
+  const stored = await chrome.storage.sync.get(DEFAULT_SETTINGS);
   state = {
     enabled: Boolean(stored.enabled),
     ecosiaEnabled: stored.ecosiaEnabled !== false,
@@ -88,17 +93,6 @@ async function setup() {
     blockedDomains: sanitizeDomains(stored.blockedDomains),
     prompts: sanitizePrompts(stored.prompts)
   };
-
-  const welcomeSection = document.getElementById("welcome-section");
-  const settingsTitle = document.getElementById("settings-title");
-
-  if (stored.welcomeSeen) {
-    welcomeSection.hidden = true;
-    settingsTitle.hidden = false;
-  } else {
-    // Mark as seen so return visits show the compact settings view
-    chrome.storage.sync.set({ welcomeSeen: true });
-  }
 
   elements.enabledToggle.addEventListener("change", async () => {
     state.enabled = elements.enabledToggle.checked;
@@ -177,10 +171,13 @@ async function setup() {
     render();
   });
 
+  setupShareImpact(elements.shareImpact, showMessage);
+
+  await renderImpact(elements);
   render();
 }
 
 setup().catch((error) => {
-  console.error("Welcome initialization failed", error);
+  console.error("Options initialization failed", error);
   showMessage("Failed to load settings.");
 });

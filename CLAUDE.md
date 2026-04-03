@@ -27,7 +27,8 @@ It is part of the **Calm & Fluffy** brand — a newsletter whose logo is a smili
 | `defaults.js` | Centralized default settings, default Search ideas list, and shared utility functions (`normalizeDomain`, `sanitizePrompts`, `sanitizeDomains`, `hasOwn`) |
 | `background.js` | Service worker: redirects, install/update behavior, context menu |
 | `popup.html/css/js` | Compact popup interface (opened from toolbar icon) |
-| `welcome.html/css/js` | Onboarding page and full settings (also used as `options_page`); shows a welcome/quick-start view on first open, then a compact settings view on subsequent visits |
+| `impact.js` | Shared module — `renderImpact` and `setupShareImpact` used by both popup and options page |
+| `options.html/css/js` | Setup & instructions page (also used as `options_page`); always shows Quick Start instructions and full settings |
 | `redirect.html/css/js` | Holding page shown briefly before forwarding to search engine |
 
 ---
@@ -42,7 +43,7 @@ It is part of the **Calm & Fluffy** brand — a newsletter whose logo is a smili
 | `ecosiaEnabled` | boolean | `true` | |
 | `oceanHeroEnabled` | boolean | `true` | At least one must always be true |
 | `imageSearchEnabled` | boolean | `false` | Global; affects both engines |
-| `welcomeSeen` | boolean | `false` (install) / `true` (update) | Controls whether welcome.html shows onboarding or the compact settings view |
+| `welcomeSeen` | boolean | `false` (install) / `true` (update) | No longer used by the options page UI; retained by `background.js` for install/update tracking |
 | `introducedPrompts` | string[] | All defaults on install | Internal tracking set; prevents previously-deleted default prompts from being silently re-added on extension updates |
 
 ---
@@ -70,7 +71,7 @@ It is part of the **Calm & Fluffy** brand — a newsletter whose logo is a smili
 
 - **Nunito** (Google Fonts) — headings, app title, section headers, button labels
 - **Source Sans 3** (Google Fonts) — body text, list items, placeholder text, descriptions
-- Both fonts are loaded via a local `fonts/fonts.css` file referenced in `popup.html`, `welcome.html`, and `redirect.html`
+- Both fonts are loaded via a local `fonts/fonts.css` file referenced in `popup.html`, `options.html`, and `redirect.html`
 - Do not introduce other fonts. Do not use system fonts or paid fonts.
 
 ---
@@ -94,10 +95,10 @@ It is part of the **Calm & Fluffy** brand — a newsletter whose logo is a smili
 
 ## UI/UX conventions
 
-- Error and validation messages are shown as **toast notifications** at the top of the page (popup and welcome page), visible regardless of which sections are collapsed. They auto-dismiss after 3 seconds.
+- Error and validation messages are shown as **toast notifications** at the top of the page (popup and options page), visible regardless of which sections are collapsed. They auto-dismiss after 3 seconds.
 - The popup uses collapsible `<details>` sections for Sites to avoid, Search engines, and Search ideas
-- The welcome page settings section also uses collapsible `<details>` sections with the same structure
-- The `<img id="app-icon">` in the popup header and `<img id="app-icon">` in the welcome header both use `icons/icon-128.png` (real PNG icon). Do not remove or restructure these elements.
+- The options page settings section also uses collapsible `<details>` sections with the same structure
+- The `<img id="app-icon">` in the popup header and `<img id="app-icon">` in the options header both use `icons/icon-128.png` (real PNG icon). Do not remove or restructure these elements.
 - The "Block current tab" button label changes dynamically to `"Block [domain]"` when the current tab has a detectable domain
 - Button hierarchy:
   - **Primary action (Block current tab):** accent blue (`var(--primary)`), white Nunito semibold label, full-width (`.primary-btn`)

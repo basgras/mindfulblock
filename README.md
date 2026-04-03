@@ -35,7 +35,7 @@ Both are enabled by default. You can disable either one, but at least one must s
 
 ## First-install onboarding
 
-On first install (`onInstalled` reason `install`) the extension opens `welcome.html`, which includes:
+On first install (`onInstalled` reason `install`) the extension opens `options.html`, which includes:
 
 1. Quick usage instructions.
 2. Calm Guard toggle.
@@ -62,7 +62,8 @@ Defaults are only applied when keys are **missing** in storage.
 | `defaults.js` | Centralized default settings and prompt list |
 | `background.js` | Service worker: redirects, install/update behavior, context menu |
 | `popup.html/css/js` | Material-style popup interface |
-| `welcome.html/css/js` | Onboarding and full settings page |
+| `impact.js` | Shared impact counter logic (used by popup and options page) |
+| `options.html/css/js` | Setup, instructions, and full settings page |
 | `redirect.html/css/js` | Mindful holding page shown briefly before forwarding |
 
 ## Load unpacked in Chrome
