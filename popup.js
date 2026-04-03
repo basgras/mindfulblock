@@ -22,7 +22,8 @@ const elements = {
   reviewDismiss: document.getElementById("review-dismiss"),
   treesCount: document.getElementById("trees-count"),
   bottlesCount: document.getElementById("bottles-count"),
-  shareImpact: document.getElementById("shareImpact")
+  shareImpact: document.getElementById("shareImpact"),
+  impactInfo: document.getElementById("impactInfo")
 };
 
 let state = { ...DEFAULT_SETTINGS };
@@ -175,6 +176,7 @@ async function renderImpact() {
   elements.treesCount.textContent = trees;
   elements.bottlesCount.textContent = bottles;
   elements.shareImpact.hidden = trees === 0 && bottles === 0;
+  elements.impactInfo.hidden = trees === 0 && bottles === 0;
 }
 
 async function setup() {
