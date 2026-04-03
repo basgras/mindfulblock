@@ -32,5 +32,5 @@
       "128": "icons/icon-128.png"
     }
   },
-  "options_page": "welcome.html"
+  "options_page": "options.html"
 }
