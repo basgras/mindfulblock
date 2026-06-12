@@ -87,3 +87,9 @@ Defaults are only applied when keys are **missing** in storage.
 | `contextMenus` | Add "Pause / Resume Calm Guard" to the extension icon right-click menu |
 | `declarativeNetRequest` | Intercept and redirect navigations to blocked domains at the network layer |
 | `<all_urls>` | Required by DNR redirect rules to intercept requests for any host |
+
+## License
+
+The code is released under the [MIT License](LICENSE).
+
+The Mindful Block name, the Calm & Fluffy brand, and the logo are not included in that license.
