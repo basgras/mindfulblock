@@ -2,7 +2,7 @@
 
 ## What this is
 
-Mindful Block is a **Manifest V3 Chrome extension** that reduces procrastination by redirecting visits to blocked domains toward mindful searches on mission-driven search engines (Ecosia and OceanHero).
+Mindful Block is a **Manifest V3 browser extension** (Chrome and Firefox) that reduces procrastination by redirecting visits to blocked domains toward mindful searches on mission-driven search engines (Ecosia and OceanHero).
 
 It is part of the **Calm & Fluffy** brand — a newsletter whose logo is a smiling cloud. The tone across all copy and UI is warm, gentle, and human. Not corporate. Not preachy. Not a stern firewall. Think: a kind nudge.
 
@@ -28,7 +28,7 @@ It is part of the **Calm & Fluffy** brand — a newsletter whose logo is a smili
 | `background.js` | Service worker / event page: DNR rule sync, install/update behavior, context menu |
 | `popup.html/css/js` | Compact popup interface (opened from toolbar icon) |
 | `impact.js` | Shared module — `renderImpact` and `setupShareImpact` used by both popup and options page |
-| `options.html/css/js` | Setup & instructions page (also used as `options_page`); always shows Quick Start instructions and full settings |
+| `options.html/css/js` | Setup & instructions page (registered as `options_ui` with `open_in_tab: true`); always shows Quick Start instructions and full settings |
 | `redirect.html/css/js` | Holding page shown briefly before forwarding to search engine |
 
 ---
@@ -105,6 +105,24 @@ It is part of the **Calm & Fluffy** brand — a newsletter whose logo is a smili
   - **Secondary action (Add):** accent blue, white Nunito semibold label, inline (`.tonal-btn`)
   - **Destructive secondary (Remove):** muted rose tint (`#FDECEA` bg, `#C0392B` text)
 - Toggle switches use the `.md-switch` class pattern with a `.track` span
+
+---
+
+## Browser support & store listings
+
+| Browser | Minimum version | Reason |
+|---------|----------------|--------|
+| Chrome / Chromium | any MV3-capable | No restrictions beyond MV3 support |
+| Firefox | **128.0** | `declarativeNetRequest` redirect rules require host permissions granted via install prompt (FF 127+); dual `service_worker` + `scripts` background keys need FF 121+; 128 is the first version where both are stable together |
+
+**Store slugs / IDs**
+
+| Store | URL / ID |
+|-------|---------|
+| Chrome Web Store | `https://chromewebstore.google.com/detail/mindful-block/nolneohpbighdcjiajppnmlcgncocenc` |
+| Firefox Add-ons (AMO) | `https://addons.mozilla.org/firefox/addon/mindful-block/` — slug: **`mindful-block`** |
+
+**Review link is browser-dependent.** `popup.js` detects the browser by checking whether `chrome.runtime.getURL("")` starts with `moz-extension://` (Firefox) or `chrome-extension://` (all Chromium browsers). No user-agent sniffing. The visible copy in the nudge strip is unchanged; only the `href` differs.
 
 ---
 

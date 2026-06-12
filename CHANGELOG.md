@@ -4,6 +4,21 @@ All notable changes to Mindful Block are documented here, grouped by version.
 
 ---
 
+## [1.3.0] — 2026-06-12
+
+Mindful Block now works in Firefox, and blocking is faster and cleaner for everyone. Instead of watching for navigation events and racing to redirect the tab, the extension now intercepts requests at the network layer — so the blocked site never loads even a single byte. No more flash of content before the redirect kicks in.
+
+### Added
+- Firefox support — install from the Firefox Add-ons store (addons.mozilla.org)
+- Network-layer blocking via `declarativeNetRequest`: the blocked site is intercepted before the request leaves the browser, eliminating any visible flash of the blocked page
+- Browser-aware review link — Firefox users are directed to the AMO listing, Chrome users to the Chrome Web Store
+
+### Changed
+- Minimum Firefox version: 128 (required for `declarativeNetRequest` redirects with host permissions and dual background script support)
+- `options_ui` replaces `options_page` for cross-browser compatibility; the options page still opens in a full tab
+
+---
+
 ## [1.2.0] — 2026-04-07
 
 This update introduces an impact counter so you can see how many trees have been planted and how much plastic has been removed from the ocean — right in your popup. The setup page was also redesigned to be clearer and easier to navigate.

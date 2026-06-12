@@ -128,6 +128,17 @@ async function addCurrentTabDomain() {
   showMessage(`Blocked ${domain}`, "info");
 }
 
+const REVIEW_URL_FIREFOX = "https://addons.mozilla.org/firefox/addon/mindful-block/reviews/";
+const REVIEW_URL_CHROME = "https://chromewebstore.google.com/detail/mindful-block/nolneohpbighdcjiajppnmlcgncocenc/reviews";
+
+function reviewUrl() {
+  // Detect browser by extension URL scheme — no UA sniffing.
+  // moz-extension:// → Firefox; chrome-extension:// → all Chromium browsers.
+  return chrome.runtime.getURL("").startsWith("moz-extension://")
+    ? REVIEW_URL_FIREFOX
+    : REVIEW_URL_CHROME;
+}
+
 async function setupReviewNudge(blockedDomainsCount) {
   const ONE_DAY = 24 * 60 * 60 * 1000;
   const stored = await chrome.storage.local.get("reviewNudge");
@@ -144,6 +155,7 @@ async function setupReviewNudge(blockedDomainsCount) {
   if (now - nudge.installDate < ONE_DAY) return;
   if (nudge.nextShowDate && now < nudge.nextShowDate) return;
 
+  elements.reviewLink.href = reviewUrl();
   elements.reviewNudge.hidden = false;
 
   elements.reviewDismiss.addEventListener("click", async () => {
