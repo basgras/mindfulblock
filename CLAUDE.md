@@ -10,12 +10,12 @@ It is part of the **Calm & Fluffy** brand — a newsletter whose logo is a smili
 
 ## How it works
 
-- Watches top-level navigation via `chrome.webNavigation.onBeforeNavigate`
-- If Calm Guard is enabled and the destination matches a blocked domain (or subdomain), navigation is interrupted
-- The tab is sent to `redirect.html`, then forwarded to a mindful search URL
-- Redirect target is selected at random between active engines (Ecosia, OceanHero)
-- Search query is randomly selected from the user's Search ideas list
-- Ecosia and OceanHero domains are always exempt from blocking
+- Blocking is handled at the network layer via `declarativeNetRequest` dynamic rules — the blocked site never loads any bytes
+- If Calm Guard is enabled, `background.js` maintains one DNR rule per blocked domain (matching main-frame navigations including all subdomains); Calm Guard off = no rules active
+- Matching navigations are redirected to `redirect.html?blocked=<domain>` before the request leaves the browser
+- `redirect.js` reads storage, picks a random engine and search idea, increments the impact counter, shows the 450 ms holding page, then forwards to the mindful search URL
+- DNR rules are kept in sync by `background.js` on install/update, on browser startup, and whenever `enabled` or `blockedDomains` change in storage
+- Ecosia and OceanHero domains are always exempt from blocking (never added as rules)
 
 ---
 
@@ -25,7 +25,7 @@ It is part of the **Calm & Fluffy** brand — a newsletter whose logo is a smili
 |------|---------|
 | `manifest.json` | Extension manifest and permissions |
 | `defaults.js` | Centralized default settings, default Search ideas list, and shared utility functions (`normalizeDomain`, `sanitizePrompts`, `sanitizeDomains`, `hasOwn`) |
-| `background.js` | Service worker: redirects, install/update behavior, context menu |
+| `background.js` | Service worker / event page: DNR rule sync, install/update behavior, context menu |
 | `popup.html/css/js` | Compact popup interface (opened from toolbar icon) |
 | `impact.js` | Shared module — `renderImpact` and `setupShareImpact` used by both popup and options page |
 | `options.html/css/js` | Setup & instructions page (also used as `options_page`); always shows Quick Start instructions and full settings |

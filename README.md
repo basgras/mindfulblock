@@ -1,13 +1,13 @@
-# Mindful Block (Chrome Extension, MV3)
+# Mindful Block (MV3 — Chrome & Firefox)
 
-A Manifest V3 Chrome extension that reduces procrastination by redirecting visits to blocked domains toward mindful searches on mission-driven search engines.
+A Manifest V3 browser extension that reduces procrastination by redirecting visits to blocked domains toward mindful searches on mission-driven search engines.
 
 ## How it works
 
-- Watches top-level navigation events via `chrome.webNavigation.onBeforeNavigate`.
-- If the extension is **enabled** and the destination hostname matches a blocked domain (or subdomain), it interrupts navigation.
-- The tab is redirected to a mindful search on one of the active engines, chosen at random.
-- The search query is randomly selected from your editable prompts list.
+- Blocking is handled at the network layer via `declarativeNetRequest` dynamic rules — the blocked site never loads any bytes.
+- The background script keeps one DNR rule per blocked domain (matching the domain and all subdomains, main-frame navigations only). Calm Guard off = no rules active.
+- Matching navigations are intercepted and sent to `redirect.html` before the request leaves the browser.
+- The redirect page reads your settings, picks a random engine and search idea, increments the impact counter, shows a 450 ms holding screen, then forwards you to the mindful search.
 - Redirect loops are prevented — Ecosia and OceanHero domains can never be blocked.
 
 ## Search engines
@@ -60,26 +60,30 @@ Defaults are only applied when keys are **missing** in storage.
 |------|---------|
 | `manifest.json` | Extension manifest and permissions |
 | `defaults.js` | Centralized default settings and prompt list |
-| `background.js` | Service worker: redirects, install/update behavior, context menu |
+| `background.js` | Service worker / event page: DNR rule sync, install/update behavior, context menu |
 | `popup.html/css/js` | Material-style popup interface |
 | `impact.js` | Shared impact counter logic (used by popup and options page) |
 | `options.html/css/js` | Setup, instructions, and full settings page |
-| `redirect.html/css/js` | Mindful holding page shown briefly before forwarding |
+| `redirect.html/css/js` | Mindful holding page: picks engine & search idea, increments counter, forwards |
 
-## Load unpacked in Chrome
+## Load unpacked
 
+**Chrome:**
 1. Open `chrome://extensions`.
 2. Enable **Developer mode**.
-3. Click **Load unpacked**.
-4. Select this folder (`mindful-block`).
-5. Pin the extension and click it to configure blocked domains and prompts.
+3. Click **Load unpacked** and select this folder.
+4. Pin the extension and click it to configure blocked domains and prompts.
+
+**Firefox:**
+1. Open `about:debugging#/runtime/this-firefox`.
+2. Click **Load Temporary Add-on** and select `manifest.json` from this folder.
 
 ## Permissions
 
 | Permission | Why |
 |-----------|-----|
 | `storage` | Save and sync settings across devices |
-| `tabs` | Open onboarding tab; read active tab URL for "Block current tab" |
+| `tabs` | Open onboarding tab; read active tab URL for "Block current tab"; reload tab on re-enable |
 | `contextMenus` | Add "Pause / Resume Calm Guard" to the extension icon right-click menu |
-| `webNavigation` | Detect top-level navigations early (`onBeforeNavigate`) |
-| `<all_urls>` | Inspect all navigations for blocklist matching |
+| `declarativeNetRequest` | Intercept and redirect navigations to blocked domains at the network layer |
+| `<all_urls>` | Required by DNR redirect rules to intercept requests for any host |

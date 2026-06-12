@@ -1,103 +1,48 @@
 import { DEFAULT_SETTINGS, DEFAULT_PROMPTS, hasOwn, sanitizeDomains, sanitizePrompts } from "./defaults.js";
 
-const ENGINE_WEB_URLS = {
-  ecosia: "https://www.ecosia.org/search?q=",
-  oceanhero: "https://oceanhero.today/web?q="
-};
-
-const ENGINE_IMAGE_URLS = {
-  ecosia: "https://www.ecosia.org/images?q=",
-  oceanhero: "https://oceanhero.today/images?q="
-};
-
 const EXEMPT_DOMAINS = ["ecosia.org", "oceanhero.today"];
-
 const CONTEXT_MENU_ID = "toggle-calm-guard";
 
-function randomItem(items) {
-  return items[Math.floor(Math.random() * items.length)];
+async function doSyncDNRRules() {
+  const stored = await chrome.storage.sync.get({ enabled: true, blockedDomains: [] });
+  const enabled = Boolean(stored.enabled);
+
+  const domains = enabled
+    ? sanitizeDomains(stored.blockedDomains).filter(
+        (d) => !EXEMPT_DOMAINS.some((exempt) => d === exempt || d.endsWith(`.${exempt}`))
+      )
+    : [];
+
+  const existingRules = await chrome.declarativeNetRequest.getDynamicRules();
+  const removeRuleIds = existingRules.map((r) => r.id);
+
+  const baseUrl = chrome.runtime.getURL("redirect.html");
+  const addRules = domains.map((domain, index) => ({
+    id: index + 1,
+    priority: 1,
+    action: {
+      type: "redirect",
+      redirect: { url: `${baseUrl}?blocked=${encodeURIComponent(domain)}` }
+    },
+    condition: {
+      requestDomains: [domain],
+      resourceTypes: ["main_frame"]
+    }
+  }));
+
+  if (removeRuleIds.length === 0 && addRules.length === 0) return;
+
+  await chrome.declarativeNetRequest.updateDynamicRules({ removeRuleIds, addRules });
 }
 
-function matchesDomain(hostname, domain) {
-  return hostname === domain || hostname.endsWith(`.${domain}`);
-}
-
-async function getSettings() {
-  const stored = await chrome.storage.sync.get(DEFAULT_SETTINGS);
-  return {
-    enabled: Boolean(stored.enabled),
-    ecosiaEnabled: stored.ecosiaEnabled !== false,
-    oceanHeroEnabled: stored.oceanHeroEnabled !== false,
-    imageSearchEnabled: Boolean(stored.imageSearchEnabled),
-    blockedDomains: sanitizeDomains(stored.blockedDomains),
-    prompts: sanitizePrompts(stored.prompts)
-  };
-}
-
-function shouldSkipHostname(hostname) {
-  return EXEMPT_DOMAINS.some((domain) => matchesDomain(hostname, domain));
-}
-
-function createMindfulSearchUrl(prompts, settings) {
-  const query = randomItem(prompts);
-
-  const enabledEngines = [];
-  if (settings.ecosiaEnabled) enabledEngines.push("ecosia");
-  if (settings.oceanHeroEnabled) enabledEngines.push("oceanhero");
-  const engines = enabledEngines.length > 0 ? enabledEngines : ["ecosia"];
-
-  const engineKey = randomItem(engines);
-  const urlMap = settings.imageSearchEnabled ? ENGINE_IMAGE_URLS : ENGINE_WEB_URLS;
-  return { url: `${urlMap[engineKey]}${encodeURIComponent(query)}`, engineKey };
-}
-
-function createHoldingPageUrl(targetUrl, blockedHostname) {
-  const params = new URLSearchParams({
-    target: targetUrl,
-    blocked: blockedHostname
+// Serialized wrapper: concurrent callers queue behind the in-flight sync so
+// rule IDs are never computed twice against the same existing-rules snapshot.
+let syncChain = Promise.resolve();
+function syncDNRRules() {
+  syncChain = syncChain.then(doSyncDNRRules).catch((err) => {
+    console.error("Mindful Block: failed to sync DNR rules", err);
   });
-  return `${chrome.runtime.getURL("redirect.html")}?${params.toString()}`;
-}
-
-async function maybeRedirect(details) {
-  if (details.frameId !== 0 || details.tabId < 0) {
-    return;
-  }
-
-  let destination;
-  try {
-    destination = new URL(details.url);
-  } catch {
-    return;
-  }
-
-  if (!["http:", "https:"].includes(destination.protocol)) {
-    return;
-  }
-
-  const hostname = destination.hostname.toLowerCase();
-  if (shouldSkipHostname(hostname)) {
-    return;
-  }
-
-  const settings = await getSettings();
-  if (!settings.enabled || settings.blockedDomains.length === 0 || settings.prompts.length === 0) {
-    return;
-  }
-
-  const isBlocked = settings.blockedDomains.some((domain) => matchesDomain(hostname, domain));
-  if (!isBlocked) {
-    return;
-  }
-
-  const { url: mindfulTarget, engineKey } = createMindfulSearchUrl(settings.prompts, settings);
-  const holdingUrl = createHoldingPageUrl(mindfulTarget, hostname);
-
-  const counterKey = engineKey === "ecosia" ? "ecosiaCount" : "oceanCount";
-  const counts = await chrome.storage.local.get({ ecosiaCount: 0, oceanCount: 0 });
-  await chrome.storage.local.set({ [counterKey]: (counts[counterKey] || 0) + 1 });
-
-  await chrome.tabs.update(details.tabId, { url: holdingUrl });
+  return syncChain;
 }
 
 async function syncContextMenuTitle() {
@@ -152,6 +97,8 @@ chrome.runtime.onInstalled.addListener(async (details) => {
     await chrome.storage.sync.set(next);
   }
 
+  await syncDNRRules();
+
   chrome.contextMenus.removeAll(() => {
     chrome.contextMenus.create({
       id: CONTEXT_MENU_ID,
@@ -166,8 +113,17 @@ chrome.runtime.onInstalled.addListener(async (details) => {
   }
 });
 
+chrome.runtime.onStartup.addListener(() => {
+  syncDNRRules();
+  syncContextMenuTitle();
+});
+
 chrome.storage.onChanged.addListener((changes, area) => {
-  if (area === "sync" && changes.enabled !== undefined) {
+  if (area !== "sync") return;
+  if (changes.enabled !== undefined || changes.blockedDomains !== undefined) {
+    syncDNRRules();
+  }
+  if (changes.enabled !== undefined) {
     const newEnabled = changes.enabled.newValue;
     chrome.contextMenus.update(CONTEXT_MENU_ID, {
       title: newEnabled ? "Pause Calm Guard" : "Resume Calm Guard"
@@ -183,23 +139,10 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
 
 syncContextMenuTitle();
 
+// When Calm Guard is re-enabled and the active tab is on a blocked site, the popup
+// sends this message. We sync DNR rules first to ensure they're in place, then
+// reload the tab so the now-active rule intercepts the navigation.
 chrome.runtime.onMessage.addListener((message) => {
   if (message.type !== "redirect-tab") return;
-  getSettings().then(async (settings) => {
-    if (settings.prompts.length === 0) return;
-    const { url: mindfulTarget, engineKey } = createMindfulSearchUrl(settings.prompts, settings);
-    const holdingUrl = createHoldingPageUrl(mindfulTarget, message.hostname);
-    const counterKey = engineKey === "ecosia" ? "ecosiaCount" : "oceanCount";
-    const counts = await chrome.storage.local.get({ ecosiaCount: 0, oceanCount: 0 });
-    await chrome.storage.local.set({ [counterKey]: (counts[counterKey] || 0) + 1 });
-    return chrome.tabs.update(message.tabId, { url: holdingUrl });
-  }).catch((error) => {
-    console.error("Mindful Block: failed to redirect tab on re-enable", error);
-  });
-});
-
-chrome.webNavigation.onBeforeNavigate.addListener((details) => {
-  maybeRedirect(details).catch((error) => {
-    console.error("Mindful Block redirect failed", error);
-  });
+  syncDNRRules().then(() => chrome.tabs.reload(message.tabId)).catch(() => {});
 });
