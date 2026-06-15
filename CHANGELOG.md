@@ -4,6 +4,15 @@ All notable changes to Mindful Block are documented here, grouped by version.
 
 ---
 
+## [1.3.1] — 2026-06-15
+
+A small patch to tighten up a few labels and tooltips — no functional changes.
+
+### Fixed
+- Minor copy and wording improvements across the popup and options page
+
+---
+
 ## [1.3.0] — 2026-06-12
 
 Mindful Block now works in Firefox, and blocking is faster and cleaner for everyone. Instead of watching for navigation events and racing to redirect the tab, the extension now intercepts requests at the network layer — so the blocked site never loads even a single byte. No more flash of content before the redirect kicks in.
